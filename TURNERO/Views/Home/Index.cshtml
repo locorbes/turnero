@@ -1,0 +1,478 @@
+﻿@{
+    ViewData["Title"] = "HOME";
+    ViewData["Type"] = ViewBag.Type;
+    ViewData["Id"] = ViewBag.Id;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (ViewBag.Type == 1)
+{
+    <div class="container">
+        <div class="row g-2 align-items-center mt-3 p-3" style="color:#fff;background-color: #0558A5 !important;">
+            <div class="col-md-4">
+                <label for="sucursales" class="form-label font-weight-bold">Seleccione sucursal</label>
+                <select id="sucursales" name="sucursales" class="form-select" aria-label="Sucursales" onchange="getTurnos(this.value)">
+                    <option value="2">San Justo</option>
+                    <option value="3">Vicente López</option>
+                    <option value="4">Adrogue</option>
+                    <option value="5">Tortuguitas</option>
+                    <option value="6">La Plata</option>
+                    <option value="7">Cordoba</option>
+                    <option value="8">Sayago</option>
+                    <option value="9">Giannattasio</option>
+                    <option value="10">Maldonado</option>
+                    <option value="11">Plaza Italia</option>
+                    <option value="12">CDAR</option>
+                    <option value="13">CDUY</option>
+                    <option value="1">San Martin</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="fechaInicio" class="form-label font-weight-bold">Fecha desde</label>
+                <input type="date" class="form-control" id="fechaInicio">
+            </div>
+            <div class="col-md-3">
+                <label for="fechaFin" class="form-label font-weight-bold">Fecha hasta</label>
+                <input type="date" class="form-control" id="fechaFin">
+            </div>
+            <div class="col-md-2">
+                <label for="botonera" class="form-label font-weight-bold">&nbsp;</label>
+                <div id="botonera" class="text-center">
+                    <button class="btn btn-outline-light" onclick="filterByDate()">Filtrar</button>
+                    <button class="btn btn-outline-light" onclick="clearFilters()">Limpiar</button>
+                    <button class="btn btn-outline-light" onclick="exportarExcel()">Exportar</button>
+                </div>
+            </div>
+        </div>
+        <div class="row g-2 align-items-center mt-3">
+            <div class="table-responsive" style="padding: 0;">
+                <table id="tablaTurnos" class="table table-striped">
+                    <thead>
+                        <tr style="text-transform: uppercase;">
+                            <th style="color:#fff;background-color: #0558A5 !important;">Horario</th>
+                            <th style="color:#fff;background-color: #0558A5 !important;">Proveedor</th>
+                            <th style="color:#fff;background-color: #0558A5 !important;">Rs</th>
+                            <th style="color:#fff;background-color: #0558A5 !important;">CUIT</th>
+                            <th style="color:#fff;background-color: #0558A5 !important;">Archivos</th>
+                            <th style="color:#fff;background-color: #0558A5 !important;">Sucursal</th>
+                            <th style="color:#fff;background-color: #0558A5 !important;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>08-02-24 12:30</td>
+                            <td>RHEEM S.A.</td>
+                            <td>RHEEM S.A.</td>
+                            <td>30612958528</td>
+                            <td>OC_1555530</td>
+                            <td>San Justo</td>
+                            <td>
+                                <button type="button" class="btn" style="color: #0558A5 !important;" onclick="verTurno({&quot;nomSuc&quot;:&quot;San Justo&quot;,&quot;id&quot;:7029,&quot;proveedorId&quot;:22,&quot;nombre_fantasia&quot;:&quot;RHEEM S.A.&quot;,&quot;rs&quot;:&quot;RHEEM S.A.&quot;,&quot;cuit&quot;:&quot;30612958528&quot;,&quot;horario&quot;:&quot;08-02-24 12:30&quot;,&quot;estado_id&quot;:1,&quot;observaciones&quot;:&quot;&quot;,&quot;created_at&quot;:&quot;2024-02-02 09:55:26.000000&quot;,&quot;Archivos&quot;:&quot;OC_1555530&quot;})">
+                                    <i class="fas fa-eye fa-lg" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>09-02-24 09:00</td>
+                            <td>SAINT-GOBAIN ARGENTINA S.A.</td>
+                            <td>SAINT-GOBAIN ARGENTINA S.A.</td>
+                            <td>30500529071</td>
+                            <td></td>
+                            <td>San Justo</td>
+                            <td>
+                                <button type="button" class="btn" style="color: #0558A5 !important;" onclick="verTurno({&quot;nomSuc&quot;:&quot;San Justo&quot;,&quot;id&quot;:7029,&quot;proveedorId&quot;:22,&quot;nombre_fantasia&quot;:&quot;RHEEM S.A.&quot;,&quot;rs&quot;:&quot;RHEEM S.A.&quot;,&quot;cuit&quot;:&quot;30612958528&quot;,&quot;horario&quot;:&quot;08-02-24 12:30&quot;,&quot;estado_id&quot;:1,&quot;observaciones&quot;:&quot;&quot;,&quot;created_at&quot;:&quot;2024-02-02 09:55:26.000000&quot;,&quot;Archivos&quot;:&quot;OC_1555530&quot;})">
+                                    <i class="fas fa-eye fa-lg" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>09-02-24 10:00</td>
+                            <td>DISAL S.A.</td>
+                            <td>DISAL S.A.</td>
+                            <td>30621181838</td>
+                            <td>OC_155342</td>
+                            <td>San Justo</td>
+                            <td>
+                                <button type="button" class="btn" style="color: #0558A5 !important;" onclick="verTurno({&quot;nomSuc&quot;:&quot;San Justo&quot;,&quot;id&quot;:7029,&quot;proveedorId&quot;:22,&quot;nombre_fantasia&quot;:&quot;RHEEM S.A.&quot;,&quot;rs&quot;:&quot;RHEEM S.A.&quot;,&quot;cuit&quot;:&quot;30612958528&quot;,&quot;horario&quot;:&quot;08-02-24 12:30&quot;,&quot;estado_id&quot;:1,&quot;observaciones&quot;:&quot;&quot;,&quot;created_at&quot;:&quot;2024-02-02 09:55:26.000000&quot;,&quot;Archivos&quot;:&quot;OC_1555530&quot;})">
+                                    <i class="fas fa-eye fa-lg" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>09-02-24 11:30</td>
+                            <td>FUINYTER S.H.</td>
+                            <td>FUINYTER S.H.</td>
+                            <td>30575433894</td>
+                            <td>OC_1555618</td>
+                            <td>San Justo</td>
+                            <td>
+                                <button type="button" class="btn" style="color: #0558A5 !important;" onclick="verTurno({&quot;nomSuc&quot;:&quot;San Justo&quot;,&quot;id&quot;:7029,&quot;proveedorId&quot;:22,&quot;nombre_fantasia&quot;:&quot;RHEEM S.A.&quot;,&quot;rs&quot;:&quot;RHEEM S.A.&quot;,&quot;cuit&quot;:&quot;30612958528&quot;,&quot;horario&quot;:&quot;08-02-24 12:30&quot;,&quot;estado_id&quot;:1,&quot;observaciones&quot;:&quot;&quot;,&quot;created_at&quot;:&quot;2024-02-02 09:55:26.000000&quot;,&quot;Archivos&quot;:&quot;OC_1555530&quot;})">
+                                    <i class="fas fa-eye fa-lg" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>13-02-24 13:00</td>
+                            <td>ROWA S.A.</td>
+                            <td>ROWA S.A.</td>
+                            <td>30540721722</td>
+                            <td>OC_1556013</td>
+                            <td>San Justo</td>
+                            <td>
+                                <button type="button" class="btn" style="color: #0558A5 !important;" onclick="verTurno({&quot;nomSuc&quot;:&quot;San Justo&quot;,&quot;id&quot;:7029,&quot;proveedorId&quot;:22,&quot;nombre_fantasia&quot;:&quot;RHEEM S.A.&quot;,&quot;rs&quot;:&quot;RHEEM S.A.&quot;,&quot;cuit&quot;:&quot;30612958528&quot;,&quot;horario&quot;:&quot;08-02-24 12:30&quot;,&quot;estado_id&quot;:1,&quot;observaciones&quot;:&quot;&quot;,&quot;created_at&quot;:&quot;2024-02-02 09:55:26.000000&quot;,&quot;Archivos&quot;:&quot;OC_1555530&quot;})">
+                                    <i class="fas fa-eye fa-lg" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>14-02-24 07:00</td>
+                            <td>CERAMICA ALBERDI S.A.</td>
+                            <td>CERAMICA ALBERDI S.A.</td>
+                            <td>33500908519</td>
+                            <td></td>
+                            <td>San Justo</td>
+                            <td>
+                                <button type="button" class="btn" style="color: #0558A5 !important;" onclick="verTurno({&quot;nomSuc&quot;:&quot;San Justo&quot;,&quot;id&quot;:7029,&quot;proveedorId&quot;:22,&quot;nombre_fantasia&quot;:&quot;RHEEM S.A.&quot;,&quot;rs&quot;:&quot;RHEEM S.A.&quot;,&quot;cuit&quot;:&quot;30612958528&quot;,&quot;horario&quot;:&quot;08-02-24 12:30&quot;,&quot;estado_id&quot;:1,&quot;observaciones&quot;:&quot;&quot;,&quot;created_at&quot;:&quot;2024-02-02 09:55:26.000000&quot;,&quot;Archivos&quot;:&quot;OC_1555530&quot;})">
+                                    <i class="fas fa-eye fa-lg" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>14-02-24 08:00</td>
+                            <td>TIGRE ARGENTINA S.A.</td>
+                            <td>TIGRE ARGENTINA S.A.</td>
+                            <td>30649705786</td>
+                            <td>OC_1555979</td>
+                            <td>San Justo</td>
+                            <td>
+                                <button type="button" class="btn" style="color: #0558A5 !important;" onclick="verTurno({&quot;nomSuc&quot;:&quot;San Justo&quot;,&quot;id&quot;:7029,&quot;proveedorId&quot;:22,&quot;nombre_fantasia&quot;:&quot;RHEEM S.A.&quot;,&quot;rs&quot;:&quot;RHEEM S.A.&quot;,&quot;cuit&quot;:&quot;30612958528&quot;,&quot;horario&quot;:&quot;08-02-24 12:30&quot;,&quot;estado_id&quot;:1,&quot;observaciones&quot;:&quot;&quot;,&quot;created_at&quot;:&quot;2024-02-02 09:55:26.000000&quot;,&quot;Archivos&quot;:&quot;OC_1555530&quot;})">
+                                    <i class="fas fa-eye fa-lg" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>14-02-24 09:00</td>
+                            <td>QUIMICA DEL NORTE S.A.</td>
+                            <td>QUIMICA DEL NORTE S.A.</td>
+                            <td>30614967125</td>
+                            <td>OC_1555857</td>
+                            <td>San Justo</td>
+                            <td>
+                                <button type="button" class="btn" style="color: #0558A5 !important;" onclick="verTurno({&quot;nomSuc&quot;:&quot;San Justo&quot;,&quot;id&quot;:7029,&quot;proveedorId&quot;:22,&quot;nombre_fantasia&quot;:&quot;RHEEM S.A.&quot;,&quot;rs&quot;:&quot;RHEEM S.A.&quot;,&quot;cuit&quot;:&quot;30612958528&quot;,&quot;horario&quot;:&quot;08-02-24 12:30&quot;,&quot;estado_id&quot;:1,&quot;observaciones&quot;:&quot;&quot;,&quot;created_at&quot;:&quot;2024-02-02 09:55:26.000000&quot;,&quot;Archivos&quot;:&quot;OC_1555530&quot;})">
+                                    <i class="fas fa-eye fa-lg" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>14-02-24 13:00</td>
+                            <td>CANDIL ILUMINACION S.A.</td>
+                            <td>CANDIL ILUMINACION S.A.</td>
+                            <td>30708171588</td>
+                            <td>OC_1555612</td>
+                            <td>San Justo</td>
+                            <td>
+                                <button type="button" class="btn" style="color: #0558A5 !important;" onclick="verTurno({&quot;nomSuc&quot;:&quot;San Justo&quot;,&quot;id&quot;:7029,&quot;proveedorId&quot;:22,&quot;nombre_fantasia&quot;:&quot;RHEEM S.A.&quot;,&quot;rs&quot;:&quot;RHEEM S.A.&quot;,&quot;cuit&quot;:&quot;30612958528&quot;,&quot;horario&quot;:&quot;08-02-24 12:30&quot;,&quot;estado_id&quot;:1,&quot;observaciones&quot;:&quot;&quot;,&quot;created_at&quot;:&quot;2024-02-02 09:55:26.000000&quot;,&quot;Archivos&quot;:&quot;OC_1555530&quot;})">
+                                    <i class="fas fa-eye fa-lg" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>14-02-24 14:00</td>
+                            <td>RHEEM S.A.</td>
+                            <td>RHEEM S.A.</td>
+                            <td>30612958528</td>
+                            <td>OC_1555530</td>
+                            <td>San Justo</td>
+                            <td>
+                                <button type="button" class="btn" style="color: #0558A5 !important;" onclick="verTurno({&quot;nomSuc&quot;:&quot;San Justo&quot;,&quot;id&quot;:7029,&quot;proveedorId&quot;:22,&quot;nombre_fantasia&quot;:&quot;RHEEM S.A.&quot;,&quot;rs&quot;:&quot;RHEEM S.A.&quot;,&quot;cuit&quot;:&quot;30612958528&quot;,&quot;horario&quot;:&quot;08-02-24 12:30&quot;,&quot;estado_id&quot;:1,&quot;observaciones&quot;:&quot;&quot;,&quot;created_at&quot;:&quot;2024-02-02 09:55:26.000000&quot;,&quot;Archivos&quot;:&quot;OC_1555530&quot;})">
+                                    <i class="fas fa-eye fa-lg" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>14-02-24 14:30</td>
+                            <td>RAFAEL EGIDIO BOIETTI</td>
+                            <td>RAFAEL EGIDIO BOIETTI</td>
+                            <td>20113380447</td>
+                            <td>OC_1555986</td>
+                            <td>San Justo</td>
+                            <td>
+                                <button type="button" class="btn" style="color: #0558A5 !important;" onclick="verTurno({&quot;nomSuc&quot;:&quot;San Justo&quot;,&quot;id&quot;:7029,&quot;proveedorId&quot;:22,&quot;nombre_fantasia&quot;:&quot;RHEEM S.A.&quot;,&quot;rs&quot;:&quot;RHEEM S.A.&quot;,&quot;cuit&quot;:&quot;30612958528&quot;,&quot;horario&quot;:&quot;08-02-24 12:30&quot;,&quot;estado_id&quot;:1,&quot;observaciones&quot;:&quot;&quot;,&quot;created_at&quot;:&quot;2024-02-02 09:55:26.000000&quot;,&quot;Archivos&quot;:&quot;OC_1555530&quot;})">
+                                    <i class="fas fa-eye fa-lg" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>15-02-24 07:00</td>
+                            <td>FIELD MEADOWS S.A.</td>
+                            <td>FIELD MEADOWS S.A.</td>
+                            <td>30628831773</td>
+                            <td>OC_1556086</td>
+                            <td>San Justo</td>
+                            <td>
+                                <button type="button" class="btn" style="color: #0558A5 !important;" onclick="verTurno({&quot;nomSuc&quot;:&quot;San Justo&quot;,&quot;id&quot;:7029,&quot;proveedorId&quot;:22,&quot;nombre_fantasia&quot;:&quot;RHEEM S.A.&quot;,&quot;rs&quot;:&quot;RHEEM S.A.&quot;,&quot;cuit&quot;:&quot;30612958528&quot;,&quot;horario&quot;:&quot;08-02-24 12:30&quot;,&quot;estado_id&quot;:1,&quot;observaciones&quot;:&quot;&quot;,&quot;created_at&quot;:&quot;2024-02-02 09:55:26.000000&quot;,&quot;Archivos&quot;:&quot;OC_1555530&quot;})">
+                                    <i class="fas fa-eye fa-lg" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>15-02-24 09:00</td>
+                            <td>ROCA ARGENTINA S.A.</td>
+                            <td>ROCA ARGENTINA S.A.</td>
+                            <td>30500526552</td>
+                            <td>OC_1554999</td>
+                            <td>San Justo</td>
+                            <td>
+                                <button type="button" class="btn" style="color: #0558A5 !important;" onclick="verTurno({&quot;nomSuc&quot;:&quot;San Justo&quot;,&quot;id&quot;:7029,&quot;proveedorId&quot;:22,&quot;nombre_fantasia&quot;:&quot;RHEEM S.A.&quot;,&quot;rs&quot;:&quot;RHEEM S.A.&quot;,&quot;cuit&quot;:&quot;30612958528&quot;,&quot;horario&quot;:&quot;08-02-24 12:30&quot;,&quot;estado_id&quot;:1,&quot;observaciones&quot;:&quot;&quot;,&quot;created_at&quot;:&quot;2024-02-02 09:55:26.000000&quot;,&quot;Archivos&quot;:&quot;OC_1555530&quot;})">
+                                    <i class="fas fa-eye fa-lg" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>15-02-24 11:00</td>
+                            <td>AKZO NOBEL ARGENTINA</td>
+                            <td>AKZO NOBEL ARGENTINA</td>
+                            <td>30500529454</td>
+                            <td></td>
+                            <td>San Justo</td>
+                            <td>
+                                <button type="button" class="btn" style="color: #0558A5 !important;" onclick="verTurno({&quot;nomSuc&quot;:&quot;San Justo&quot;,&quot;id&quot;:7029,&quot;proveedorId&quot;:22,&quot;nombre_fantasia&quot;:&quot;RHEEM S.A.&quot;,&quot;rs&quot;:&quot;RHEEM S.A.&quot;,&quot;cuit&quot;:&quot;30612958528&quot;,&quot;horario&quot;:&quot;08-02-24 12:30&quot;,&quot;estado_id&quot;:1,&quot;observaciones&quot;:&quot;&quot;,&quot;created_at&quot;:&quot;2024-02-02 09:55:26.000000&quot;,&quot;Archivos&quot;:&quot;OC_1555530&quot;})">
+                                    <i class="fas fa-eye fa-lg" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>15-02-24 14:30</td>
+                            <td>FV S.A.</td>
+                            <td>FV S.A.</td>
+                            <td>30500987878</td>
+                            <td></td>
+                            <td>San Justo</td>
+                            <td>
+                                <button type="button" class="btn" style="color: #0558A5 !important;" onclick="verTurno({&quot;nomSuc&quot;:&quot;San Justo&quot;,&quot;id&quot;:7029,&quot;proveedorId&quot;:22,&quot;nombre_fantasia&quot;:&quot;RHEEM S.A.&quot;,&quot;rs&quot;:&quot;RHEEM S.A.&quot;,&quot;cuit&quot;:&quot;30612958528&quot;,&quot;horario&quot;:&quot;08-02-24 12:30&quot;,&quot;estado_id&quot;:1,&quot;observaciones&quot;:&quot;&quot;,&quot;created_at&quot;:&quot;2024-02-02 09:55:26.000000&quot;,&quot;Archivos&quot;:&quot;OC_1555530&quot;})">
+                                    <i class="fas fa-eye fa-lg" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>16-02-24 14:30</td>
+                            <td>FERVA S.A.</td>
+                            <td>FERVA S.A.</td>
+                            <td>30607988958</td>
+                            <td>OC_1555992</td>
+                            <td>San Justo</td>
+                            <td>
+                                <button type="button" class="btn" style="color: #0558A5 !important;" onclick="verTurno({&quot;nomSuc&quot;:&quot;San Justo&quot;,&quot;id&quot;:7029,&quot;proveedorId&quot;:22,&quot;nombre_fantasia&quot;:&quot;RHEEM S.A.&quot;,&quot;rs&quot;:&quot;RHEEM S.A.&quot;,&quot;cuit&quot;:&quot;30612958528&quot;,&quot;horario&quot;:&quot;08-02-24 12:30&quot;,&quot;estado_id&quot;:1,&quot;observaciones&quot;:&quot;&quot;,&quot;created_at&quot;:&quot;2024-02-02 09:55:26.000000&quot;,&quot;Archivos&quot;:&quot;OC_1555530&quot;})">
+                                    <i class="fas fa-eye fa-lg" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>16-02-24 15:00</td>
+                            <td>ABC CENTER S.A.</td>
+                            <td>ABC CENTER S.A.</td>
+                            <td>30714422592</td>
+                            <td>OC_1555691</td>
+                            <td>San Justo</td>
+                            <td>
+                                <button type="button" class="btn" style="color: #0558A5 !important;" onclick="verTurno({&quot;nomSuc&quot;:&quot;San Justo&quot;,&quot;id&quot;:7029,&quot;proveedorId&quot;:22,&quot;nombre_fantasia&quot;:&quot;RHEEM S.A.&quot;,&quot;rs&quot;:&quot;RHEEM S.A.&quot;,&quot;cuit&quot;:&quot;30612958528&quot;,&quot;horario&quot;:&quot;08-02-24 12:30&quot;,&quot;estado_id&quot;:1,&quot;observaciones&quot;:&quot;&quot;,&quot;created_at&quot;:&quot;2024-02-02 09:55:26.000000&quot;,&quot;Archivos&quot;:&quot;OC_1555530&quot;})">
+                                    <i class="fas fa-eye fa-lg" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>19-02-24 10:00</td>
+                            <td>VITOP INTERNACIONAL SA</td>
+                            <td>VITOP INTERNACIONAL SA</td>
+                            <td>30711225974</td>
+                            <td>OC_1555824</td>
+                            <td>San Justo</td>
+                            <td>
+                                <button type="button" class="btn" style="color: #0558A5 !important;" onclick="verTurno({&quot;nomSuc&quot;:&quot;San Justo&quot;,&quot;id&quot;:7029,&quot;proveedorId&quot;:22,&quot;nombre_fantasia&quot;:&quot;RHEEM S.A.&quot;,&quot;rs&quot;:&quot;RHEEM S.A.&quot;,&quot;cuit&quot;:&quot;30612958528&quot;,&quot;horario&quot;:&quot;08-02-24 12:30&quot;,&quot;estado_id&quot;:1,&quot;observaciones&quot;:&quot;&quot;,&quot;created_at&quot;:&quot;2024-02-02 09:55:26.000000&quot;,&quot;Archivos&quot;:&quot;OC_1555530&quot;})">
+                                    <i class="fas fa-eye fa-lg" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container">
+        <div class="row g-2 align-items-center mt-3">
+            <div class="col-md-12" style="background-color:#0558A5;padding: 20px;">
+                <label for="sucursales" class="form-label text-white text-opacity-75 fw-bold" style="font-size: 1rem">Seleccione sucursal</label>
+                <select id="sucursales" name="sucursales" class="form-select" aria-label="Sucursales" onchange="updateFromSucursal()">
+                    <option value="2" selected="selected">San Justo</option>
+                    <option value="3">Vicente López</option>
+                    <option value="4">Adrogue</option>
+                    <option value="5">Tortuguitas</option>
+                    <option value="6">La Plata</option>
+                    <option value="7">Cordoba</option>
+                    <option value="8">Sayago</option>
+                    <option value="9">Giannattasio</option>
+                    <option value="10">Maldonado</option>
+                    <option value="11">Plaza Italia</option>
+                    <option value="12">CDAR</option>
+                    <option value="13">CDUY</option>
+                    <option value="1">San Martin</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="wrapper mt-3" style="height: 550px; overflow: auto; box-shadow: 0 10px 15px 2px rgba(5, 80, 160, 0.5)">
+                    <header class="header">
+                        <p class="current-date">Febrero 2024</p>
+                        <div class="icons">
+                        <span id="prev" class="material-symbols-rounded">chevron_left</span>
+                        <span id="next" class="material-symbols-rounded">chevron_right</span>
+                        </div>
+                    </header>
+                    <div class="calendar">
+                        <ul class="list-group list-group-horizontal border-0">
+                            <li class="list-group-item text-white fw-bold border-0" style="background-color: #CADDF0;">Do</li>
+                            <li class="list-group-item text-white fw-bold border-0" style="background-color: #CADDF0;">Lu</li>
+                            <li class="list-group-item text-white fw-bold border-0" style="background-color: #CADDF0;">Ma</li>
+                            <li class="list-group-item text-white fw-bold border-0" style="background-color: #CADDF0;">Mi</li>
+                            <li class="list-group-item text-white fw-bold border-0" style="background-color: #CADDF0;">Ju</li>
+                            <li class="list-group-item text-white fw-bold border-0" style="background-color: #CADDF0;">Vi</li>
+                            <li class="list-group-item text-white fw-bold border-0" style="background-color: #CADDF0;">Sa</li>
+                        </ul>
+                        <ul class="list-group days">
+                            <ul class="list-group list-group-horizontal">
+                                <li class="inactive">28</li>
+                                <li class="inactive">29</li>
+                                <li class="inactive">30</li>
+                                <li class="inactive">31</li>
+                                <li class="" data-date="2024-2-1">1</li>
+                                <li class="" data-date="2024-2-2">2</li>
+                                <li class="" data-date="2024-2-3">3</li>
+                            </ul>
+                            <ul class="list-group list-group-horizontal">
+                                <li class="" data-date="2024-2-4">4</li>
+                                <li class="" data-date="2024-2-5">5</li>
+                                <li class="" data-date="2024-2-6">6</li>
+                                <li class="" data-date="2024-2-7">7</li>
+                                <li class="" data-date="2024-2-8">8</li>
+                                <li class="" data-date="2024-2-9">9</li>
+                                <li class="" data-date="2024-2-10">10</li>
+                            </ul>
+                            <ul class="list-group list-group-horizontal">
+                                <li class="active" data-date="2024-2-11">11</li>
+                                <li class="" data-date="2024-2-12">12</li>
+                                <li class="" data-date="2024-2-13">13</li>
+                                <li class="" data-date="2024-2-14">14</li>
+                                <li class="" data-date="2024-2-15">15</li>
+                                <li class="" data-date="2024-2-16">16</li>
+                                <li class="" data-date="2024-2-17">17</li>
+                            </ul>
+                            <ul class="list-group list-group-horizontal">
+                                <li class="" data-date="2024-2-18">18</li>
+                                <li class="" data-date="2024-2-19">19</li>
+                                <li class="" data-date="2024-2-20">20</li>
+                                <li class="" data-date="2024-2-21">21</li>
+                                <li class="" data-date="2024-2-22">22</li>
+                                <li class="" data-date="2024-2-23">23</li>
+                                <li class="" data-date="2024-2-24">24</li>
+                            </ul>
+                            <ul class="list-group list-group-horizontal">
+                                <li class="" data-date="2024-2-25">25</li>
+                                <li class="" data-date="2024-2-26">26</li>
+                                <li class="" data-date="2024-2-27">27</li>
+                                <li class="" data-date="2024-2-28">28</li>
+                                <li class="" data-date="2024-2-29">29</li>
+                            </ul>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mt-3" style="height: 550px; padding: 20px; overflow: auto; box-shadow: 0 10px 15px 2px rgba(5, 80, 160, 0.5)">
+                    <table id="tablaReservas" class="table">
+                        <thead>
+                            <tr class="rounded-2">
+                                <th class="text-white fw-bold text-uppercase text-center" style="border-radius: 6px 0px 0px 0px; background-color: #CADDF0;">Hora</th>
+                                <th class="text-white fw-bold text-uppercase" style="border-radius: 0px 6px 0px 0px; background-color: #CADDF0;">Haga clic en el horario a reservar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-body">
+                            <tr>
+                                <td class="fw-bold text-center">12:00</td>
+                                <td>Turno Reservado</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mt-5" id="Reservas">
+                <div class="card blue-card mt-2">
+                    <div class="row p-3">
+                        <div class="col-md-1 text-center">
+                            <div class="time">06:00</div>
+                            <div class="date">12-02-24</div>
+                        </div>
+                        <div class="col-md-7 text-center" style="border-left: 2px solid #d1e2f2;border-right: 2px solid #d1e2f2;">
+                            <div class="store">Tienda CDAR</div>
+                            <div class="remark">Observaciones:Turno Bloqueado.</div>
+                        </div>
+                        <div class="col-md-3 text-center" style="border-left: 2px solid #d1e2f2;border-right: 2px solid #d1e2f2;">
+                            <div class="files">Archivos</div>
+                            <div class="files">fc1231564</div>
+                        </div>
+                        <div class="col-md-1 mt-2 d-flex align-items-center justify-content-center">
+                            <button class="btn text-white" style="background-color:#0558A5;">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card blue-card mt-2">
+                    <div class="row p-3">
+                        <div class="col-md-1 text-center">
+                            <div class="time">12:00</div>
+                            <div class="date">11-12-24</div>
+                        </div>
+                        <div class="col-md-7 text-center" style="border-left: 2px solid #d1e2f2;border-right: 2px solid #d1e2f2;">
+                            <div class="store">Tienda Tortuguitas</div>
+                            <div class="remark">Observaciones:Turno Bloqueado.</div>
+                        </div>
+                        <div class="col-md-3 text-center" style="border-left: 2px solid #d1e2f2;border-right: 2px solid #d1e2f2;">
+                            <div class="files">Archivos</div>
+                            <div class="files">fc1231564</div>
+                            <div class="files">oc548641</div>
+                            <div class="files">fc8979112</div>
+                        </div>
+                        <div class="col-md-1 mt-2 d-flex align-items-center justify-content-center">
+                            <button class="btn text-white" style="background-color:#0558A5;">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card blue-card mt-2">
+                    <div class="row p-3">
+                        <div class="col-md-1 text-center">
+                            <div class="time">17:00</div>
+                            <div class="date">31-12-24</div>
+                        </div>
+                        <div class="col-md-7 text-center" style="border-left: 2px solid #d1e2f2;border-right: 2px solid #d1e2f2;">
+                            <div class="store">Tienda San Martín</div>
+                            <div class="remark">Observaciones:Turno Bloqueado.</div>
+                        </div>
+                        <div class="col-md-3 text-center" style="border-left: 2px solid #d1e2f2;border-right: 2px solid #d1e2f2;">
+                            <div class="files">Archivos</div>
+                            <div class="files">oc548641</div>
+                            <div class="files">fc8979112</div>
+                        </div>
+                        <div class="col-md-1 mt-2 d-flex align-items-center justify-content-center" >
+                            <button class="btn text-white" style="background-color:#0558A5;">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+
+        </div>
+        </div>
+    </div>
+}
