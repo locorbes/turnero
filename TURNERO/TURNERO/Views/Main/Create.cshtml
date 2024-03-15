@@ -1,0 +1,31 @@
+﻿@model ContactModel
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        Crear Contacto
+    </div>
+    <div class="card-body">
+        <form asp-action="Create" asp-controller="Main" method="post">
+            <div class="mb-3">
+                <label for="InputName" class="form-label">Name</label>
+                <input asp-for="name" type="text" class="form-control" id="InputName">
+            </div>
+            <div class="mb-3">
+                <label for="InputPhone" class="form-label">Phone</label>
+                <input asp-for="phone" type="text" class="form-control" id="InputPhone">
+            </div>
+            <div class="mb-3">
+                <label for="InputEmail" class="form-label">Mail</label>
+                <input asp-for="mail" type="email" class="form-control" id="InputMail" aria-describedby="emailHelp">
+                <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Crear</button>
+            <a asp-action="List" asp-controller="Main" class="btn btn-warning">Volver a la lista</a>
+        </form>
+    </div>
+</div>
+
