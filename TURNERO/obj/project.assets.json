@@ -7013,11 +7013,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Usuario\\Desktop\\T\\TURNERO\\TURNERO.csproj",
+      "projectUniqueName": "C:\\Users\\Usuario\\Desktop\\GIT\\TURNERO\\TURNERO\\TURNERO.csproj",
       "projectName": "TURNERO",
-      "projectPath": "C:\\Users\\Usuario\\Desktop\\T\\TURNERO\\TURNERO.csproj",
+      "projectPath": "C:\\Users\\Usuario\\Desktop\\GIT\\TURNERO\\TURNERO\\TURNERO.csproj",
       "packagesPath": "C:\\Users\\Usuario\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Usuario\\Desktop\\T\\TURNERO\\obj\\",
+      "outputPath": "C:\\Users\\Usuario\\Desktop\\GIT\\TURNERO\\TURNERO\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Usuario\\AppData\\Roaming\\NuGet\\NuGet.Config",

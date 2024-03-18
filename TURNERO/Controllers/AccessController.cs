@@ -1,35 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Security.Cryptography;
-using System.Text;
+using TURNERO.Helpers;
+using TURNERO.Models;
+using TURNERO.Data;
 using System.Data.SqlClient;
 using System.Data;
-using TURNERO.Data;
 using Newtonsoft.Json;
-using TURNERO.Models;
-using System.Runtime.InteropServices;
 using NuGet.Common;
 
 namespace TURNERO.Controllers
 {
     public class AccessController : Controller
     {
-        //HASH
-        private string Sha256(string input)
-        {
-            using (SHA256 sha256 = new SHA256Managed())
-            {
-                byte[] bytes = Encoding.UTF8.GetBytes(input);
-                byte[] hashBytes = sha256.ComputeHash(bytes);
-
-                StringBuilder stringBuilder = new StringBuilder();
-                foreach (byte b in hashBytes)
-                {
-                    stringBuilder.Append(b.ToString("x2"));
-                }
-
-                return stringBuilder.ToString();
-            }
-        }
         //LOGIN
         [HttpGet]
         public IActionResult Login()
@@ -39,11 +20,11 @@ namespace TURNERO.Controllers
         [HttpPost]
         public IActionResult Login(string user, string pass, int type)
         {
-            string sp = type == 1 ? "spUserValidate" : "spProviderValidate";
+            string sp = type == 1 ? "spAdminValidate" : "spProviderValidate";
 
             UserModel ou = new UserModel();
             ou.user = user;
-            ou.pass = Sha256(pass);
+            ou.pass = HelperText.Sha256(pass);
             ou.type = type; 
 
             var conn = new Connection();
@@ -86,7 +67,7 @@ namespace TURNERO.Controllers
 
             try
             {
-                string spSelect = type == 1 ? "SELECT id FROM users WHERE token = @token" : "SELECT id FROM providers WHERE token = @token";
+                string spSelect = type == 1 ? "SELECT id FROM admins WHERE token = @token" : "SELECT id FROM providers WHERE token = @token";
                 var conn = new Connection();
                 using (var connection = new SqlConnection(conn.getStringSQL()))
                 {
@@ -123,7 +104,7 @@ namespace TURNERO.Controllers
 
             if (pass == repass)
             {
-                pass = Sha256(pass);
+                pass = HelperText.Sha256(pass);
             }
             else
             {
@@ -133,7 +114,7 @@ namespace TURNERO.Controllers
 
             try
             {
-                string sp = type == 1 ? "spUserPassUpdate" : "spProviderPassUpdate";
+                string sp = type == 1 ? "spAdminPassUpdate" : "spProviderPassUpdate";
                 var conn = new Connection();
                 using (var connection = new SqlConnection(conn.getStringSQL()))
                 {

@@ -17,71 +17,71 @@ build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = TURNERO
 build_property.RootNamespace = TURNERO
-build_property.ProjectDir = C:\Users\Usuario\Desktop\T\TURNERO\
+build_property.ProjectDir = C:\Users\Usuario\Desktop\GIT\TURNERO\TURNERO\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = true
-build_property.MSBuildProjectDirectory = C:\Users\Usuario\Desktop\T\TURNERO
+build_property.MSBuildProjectDirectory = C:\Users\Usuario\Desktop\GIT\TURNERO\TURNERO
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/Usuario/Desktop/T/TURNERO/Views/Access/ChangePass.cshtml]
+[C:/Users/Usuario/Desktop/GIT/TURNERO/TURNERO/Views/Access/ChangePass.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjZXNzXENoYW5nZVBhc3MuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Usuario/Desktop/T/TURNERO/Views/Access/Login.cshtml]
+[C:/Users/Usuario/Desktop/GIT/TURNERO/TURNERO/Views/Access/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjZXNzXExvZ2luLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Usuario/Desktop/T/TURNERO/Views/Access/Register.cshtml]
+[C:/Users/Usuario/Desktop/GIT/TURNERO/TURNERO/Views/Access/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjZXNzXFJlZ2lzdGVyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Usuario/Desktop/T/TURNERO/Views/Home/Index.cshtml]
+[C:/Users/Usuario/Desktop/GIT/TURNERO/TURNERO/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Usuario/Desktop/T/TURNERO/Views/Home/Privacy.cshtml]
+[C:/Users/Usuario/Desktop/GIT/TURNERO/TURNERO/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Usuario/Desktop/T/TURNERO/Views/Mails/Recover.cshtml]
+[C:/Users/Usuario/Desktop/GIT/TURNERO/TURNERO/Views/Mails/Recover.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpbHNcUmVjb3Zlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Usuario/Desktop/T/TURNERO/Views/Main/Create.cshtml]
+[C:/Users/Usuario/Desktop/GIT/TURNERO/TURNERO/Views/Main/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Usuario/Desktop/T/TURNERO/Views/Main/Delete.cshtml]
+[C:/Users/Usuario/Desktop/GIT/TURNERO/TURNERO/Views/Main/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxEZWxldGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Usuario/Desktop/T/TURNERO/Views/Main/List.cshtml]
+[C:/Users/Usuario/Desktop/GIT/TURNERO/TURNERO/Views/Main/List.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxMaXN0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Usuario/Desktop/T/TURNERO/Views/Main/Update.cshtml]
+[C:/Users/Usuario/Desktop/GIT/TURNERO/TURNERO/Views/Main/Update.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxVcGRhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Usuario/Desktop/T/TURNERO/Views/Shared/Error.cshtml]
+[C:/Users/Usuario/Desktop/GIT/TURNERO/TURNERO/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Usuario/Desktop/T/TURNERO/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/Usuario/Desktop/GIT/TURNERO/TURNERO/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Usuario/Desktop/T/TURNERO/Views/_ViewImports.cshtml]
+[C:/Users/Usuario/Desktop/GIT/TURNERO/TURNERO/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Usuario/Desktop/T/TURNERO/Views/_ViewStart.cshtml]
+[C:/Users/Usuario/Desktop/GIT/TURNERO/TURNERO/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Usuario/Desktop/T/TURNERO/Views/Shared/_Layout.cshtml]
+[C:/Users/Usuario/Desktop/GIT/TURNERO/TURNERO/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-js64iv97at
