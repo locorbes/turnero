@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TURNERO")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eb016779a6fefa4bec7accc89536e8b500ea24c5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
 [assembly: System.Reflection.AssemblyProductAttribute("TURNERO")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TURNERO")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

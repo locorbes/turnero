@@ -62,6 +62,29 @@ CREATE PROC spAdminPassUpdate(
 	END
 GO
 
+CREATE PROCEDURE spAdminList
+    @init INT = 0,
+    @rows INT = 100,
+    @order_row NVARCHAR(100) = 'id'
+AS
+	BEGIN
+		SET NOCOUNT ON;
+
+		DECLARE @sql NVARCHAR(MAX);
+
+		SET @sql = 'SELECT * FROM (
+						SELECT ROW_NUMBER() OVER (ORDER BY ' + @order_row + ') AS RowNum, *
+							FROM admins
+						) AS Sub
+					WHERE RowNum BETWEEN ' + CAST(@init + 1 AS NVARCHAR(10)) + ' AND ' + CAST(@init + @rows AS NVARCHAR(10)) + ';';
+
+		EXEC sp_executesql @sql;
+
+	END
+GO
+
+--EXEC spAdminList @init = 0, @rows = 100, @order_row = 'id';
+
 CREATE PROC spAdminCreate(
 	@user VARCHAR(50),
 	@mail VARCHAR(320),
@@ -109,15 +132,16 @@ CREATE PROC spAdminUpdate(
 	@user_config BIT,
 	@provider_config BIT,
 	@branch_config BIT,
-	@status BIT
+	@status BIT,
+	@updated_by INT
 	)
 	AS
 	BEGIN
-		UPDATE admins SET [user] = @user, mail= @mail, [name] = @name, surname = @surname, user_config = @user_config, provider_config = @provider_config, branch_config = @branch_config, [status] = @status WHERE id = @id
+		UPDATE admins SET [user] = @user, mail= @mail, [name] = @name, surname = @surname, user_config = @user_config, provider_config = @provider_config, branch_config = @branch_config, [status] = @status, updated_by = @updated_by, updated_at = GETDATE() WHERE id = @id
 	END
 GO
 
-CREATE PROC [spAdminDelete](
+CREATE PROC spAdminDelete(
 	@id INT
 	)
 	AS
@@ -140,6 +164,79 @@ CREATE TABLE regions (
 GO
 
 INSERT INTO regions([name]) VALUES('ARGENTINA'), ('URUGUAY')
+GO
+
+CREATE PROCEDURE spRegionList
+    @init INT = 0,
+    @rows INT = 100,
+    @order_row NVARCHAR(100) = 'id'
+AS
+	BEGIN
+		SET NOCOUNT ON;
+
+		DECLARE @sql NVARCHAR(MAX);
+
+		SET @sql = 'SELECT * FROM (
+						SELECT ROW_NUMBER() OVER (ORDER BY ' + @order_row + ') AS RowNum, *
+							FROM regions
+						) AS Sub
+					WHERE RowNum BETWEEN ' + CAST(@init + 1 AS NVARCHAR(10)) + ' AND ' + CAST(@init + @rows AS NVARCHAR(10)) + ';';
+
+		EXEC sp_executesql @sql;
+
+	END
+GO
+
+--EXEC spRegionList @init = 0, @rows = 1, @order_row = 'id';
+
+CREATE PROC spRegionCreate(
+	@name VARCHAR(100),
+	@status BIT OUTPUT,
+	@message VARCHAR(100) OUTPUT,
+	@created_by INT = 1
+	)
+	AS
+	BEGIN
+		IF(NOT EXISTS(SELECT * FROM regions WHERE [name] = @name))
+		BEGIN
+			INSERT INTO admins([name], created_by, created_at) VALUES(@name, @created_by, GETDATE())
+			SET @status = 1
+			SET @message = 'La region ha sido registrada'
+		END
+		ELSE
+		BEGIN
+			SET @status = 0
+			SET @message = 'El region ya se encuentra registrada'
+		END
+	END
+GO
+
+CREATE PROC spRegionRead(
+	@id INT
+	)
+	AS
+	BEGIN
+		SELECT * FROM regions WHERE id = @id
+	END
+GO
+
+CREATE PROC spRegionUpdate(
+	@id INT,
+	@name VARCHAR(100)
+	)
+	AS
+	BEGIN
+		UPDATE regions SET [name] = @name WHERE id = @id
+	END
+GO
+
+CREATE PROC spRegionDelete(
+	@id INT
+	)
+	AS
+	BEGIN
+		DELETE FROM regions WHERE id = @id
+	END
 GO
 
 /*PROVIDERS*/
@@ -205,20 +302,51 @@ CREATE PROC spProviderPassUpdate(
 	END
 GO
 
+CREATE PROCEDURE spProviderList
+    @init INT = 0,
+    @rows INT = 100,
+    @order_row NVARCHAR(100) = 'id'
+AS
+	BEGIN
+		SET NOCOUNT ON;
+
+		DECLARE @sql NVARCHAR(MAX);
+
+		SET @sql = 'SELECT * FROM (
+						SELECT ROW_NUMBER() OVER (ORDER BY ' + @order_row + ') AS RowNum, *
+							FROM providers
+						) AS Sub
+					WHERE RowNum BETWEEN ' + CAST(@init + 1 AS NVARCHAR(10)) + ' AND ' + CAST(@init + @rows AS NVARCHAR(10)) + ';';
+
+		EXEC sp_executesql @sql;
+
+	END
+GO
+
+--EXEC spProviderList @init = 0, @rows = 1, @order_row = 'id';
+
 CREATE PROC spProviderCreate(
 	@cuit VARCHAR(50),
-	@mail VARCHAR(320),
+	@commercial_mail VARCHAR(50),
 	@pass VARCHAR(64),
 	@region_id INT,
 	@status BIT OUTPUT,
 	@message VARCHAR(100) OUTPUT,
+	@code INT = NULL,
+	@business_name VARCHAR(50) = NULL,
+	@name VARCHAR(50) = NULL,
+	@it_mail VARCHAR(50) = NULL,
+	@origin VARCHAR(50) = NULL,
+    @address VARCHAR(50) = NULL,
+	@observations VARCHAR(255) = NULL,
+	@fc_required TINYINT = NULL,
 	@created_by INT = 1
 	)
 	AS
 	BEGIN
 		IF(NOT EXISTS(SELECT * FROM providers WHERE cuit = @cuit))
 		BEGIN
-			INSERT INTO providers(cuit, commercial_mail, pass, [status], region_id, created_by, created_at) VALUES(@cuit, @mail, @pass, 1, @region_id, @created_by, GETDATE())
+			INSERT INTO providers(cuit, commercial_mail, pass, [status], region_id, code, business_name, [name], it_mail, origin, [address], observations, fc_required, created_by, created_at) VALUES(@cuit, @commercial_mail, @pass, 1, @region_id, @code, @business_name, @name, @it_mail, @origin, @address, @observations, @fc_required, @created_by, GETDATE())
 			SET @status = 1
 			SET @message = 'El proveedor ha sido registrado'
 		END
@@ -234,4 +362,153 @@ DECLARE @msg VARCHAR(100), @status BIT
 EXEC spProviderCreate '123456789', 'locorbes@hotmail.com', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', 1, @status OUTPUT, @msg OUTPUT
 SELECT @msg
 SELECT @status
+GO
+
+CREATE PROC spProviderRead(
+	@id INT
+	)
+	AS
+	BEGIN
+		SELECT * FROM providers WHERE id = @id
+	END
+GO
+
+CREATE PROC spProviderUpdate(
+	@id INT,
+	@cuit VARCHAR(50),
+	@commercial_mail VARCHAR(50),
+	@region_id INT,
+	@code INT,
+	@business_name VARCHAR(50),
+	@name VARCHAR(50),
+	@it_mail VARCHAR(50),
+	@origin VARCHAR(50),
+    @address VARCHAR(50),
+	@observations VARCHAR(255),
+	@fc_required TINYINT,
+	@updated_by INT
+	)
+	AS
+	BEGIN
+		UPDATE providers SET cuit = @cuit, commercial_mail = @commercial_mail, region_id = @region_id, code = @code, business_name = @business_name, [name] = @name, it_mail = @it_mail, origin = @origin, [address] = @address, observations = @observations, fc_required = @fc_required, updated_by = @updated_by, updated_at = GETDATE() WHERE id = @id
+	END
+GO
+
+CREATE PROC spProviderDelete(
+	@id INT
+	)
+	AS
+	BEGIN
+		DELETE FROM providers WHERE id = @id
+	END
+GO
+
+/*BRANCHS*/
+CREATE TABLE branchs (
+  id  INT PRIMARY KEY IDENTITY(1, 1),
+  [name] VARCHAR(50) DEFAULT NULL,
+  code VARCHAR(50) DEFAULT NULL,
+  commercial_mail VARCHAR(50) DEFAULT NULL,
+  it_mail VARCHAR(50) DEFAULT NULL,
+  region_id INT DEFAULT NULL,
+  [address] VARCHAR(50) DEFAULT NULL,
+  longitude VARCHAR(50) DEFAULT NULL,
+  latitude VARCHAR(50) DEFAULT NULL,
+  company_id INT DEFAULT NULL,
+  created_at DATETIME DEFAULT NULL,
+  updated_at DATETIME DEFAULT NULL,
+  created_by INT DEFAULT NULL,
+  updated_by INT DEFAULT NULL,
+  CONSTRAINT FK_branchs_regions FOREIGN KEY (region_id) REFERENCES regions(id)
+)
+GO
+
+CREATE PROCEDURE spBranchList
+    @init INT = 0,
+    @rows INT = 100,
+    @order_row NVARCHAR(100) = 'id'
+AS
+	BEGIN
+		SET NOCOUNT ON;
+
+		DECLARE @sql NVARCHAR(MAX);
+
+		SET @sql = 'SELECT * FROM (
+						SELECT ROW_NUMBER() OVER (ORDER BY ' + @order_row + ') AS RowNum, *
+							FROM branchs
+						) AS Sub
+					WHERE RowNum BETWEEN ' + CAST(@init + 1 AS NVARCHAR(10)) + ' AND ' + CAST(@init + @rows AS NVARCHAR(10)) + ';';
+
+		EXEC sp_executesql @sql;
+
+	END
+GO
+
+--EXEC spBranchList @init = 0, @rows = 1, @order_row = 'id';
+
+
+CREATE PROC spBranchRead(
+	@id INT
+	)
+	AS
+	BEGIN
+		SELECT * FROM branchs WHERE id = @id
+	END
+GO
+
+CREATE PROC spBranchCreate(
+	@name VARCHAR(50),
+	@code VARCHAR(50),
+	@commercial_mail VARCHAR(50),
+	@it_mail VARCHAR(50),
+	@region_id INT,
+	@address VARCHAR(50),
+	@longitude VARCHAR(50),
+	@latitude VARCHAR(50),
+	@company_id INT,
+	@status BIT OUTPUT,
+	@message VARCHAR(100) OUTPUT,
+	@created_by INT = 1
+	)
+	AS
+	BEGIN
+		IF(NOT EXISTS(SELECT * FROM branchs WHERE [name] = @name))
+		BEGIN
+			INSERT INTO branchs([name], code, commercial_mail, it_mail, region_id, [address], longitude, latitude, company_id, created_by, created_at) VALUES( @name, @code, @commercial_mail, @it_mail, @region_id, @address, @longitude, @latitude, @company_id, @created_by, GETDATE())
+			SET @status = 1
+			SET @message = 'La sucursal ha sido registrada'
+		END
+		ELSE
+		BEGIN
+			SET @status = 0
+			SET @message = 'La sucursal ya se encuentra registrada'
+		END
+	END
+GO
+CREATE PROC spBranchUpdate(
+	@id INT,
+	@name VARCHAR(50),
+	@code VARCHAR(50),
+	@commercial_mail VARCHAR(50),
+	@it_mail VARCHAR(50),
+	@region_id INT,
+	@address VARCHAR(50),
+	@longitude VARCHAR(50),
+	@latitude VARCHAR(50),
+	@company_id INT,
+	@updated_by INT
+	)
+	AS
+	BEGIN
+		UPDATE branchs SET [name] = @name, code = @code, commercial_mail = @commercial_mail, it_mail = @it_mail,region_id = @region_id, [address] = @address, longitude = @longitude, latitude = @latitude, company_id = @company_id, updated_by = @updated_by, updated_at = GETDATE() WHERE id = @id
+	END
+GO
+
+CREATE PROC spBranchDelete(
+	@id INT
+	)
+	AS
+	BEGIN
+		DELETE FROM branchs WHERE id = @id
+	END
 GO

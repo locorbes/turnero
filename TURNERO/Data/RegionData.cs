@@ -5,47 +5,40 @@ using TURNERO.Models;
 
 namespace TURNERO.Data
 {
-    public class AdminData
+    public class RegionData
     {
-        public List<AdminModel> List()
+        public List<RegionModel> List()
         {
-            var ol = new List<AdminModel>();
+            var ol = new List<RegionModel>();
             var conn = new Connection();
             using (var connection = new SqlConnection(conn.getStringSQL()))
             {
                 connection.Open();
-                SqlCommand cmd = new SqlCommand("spAdminList", connection);
+                SqlCommand cmd = new SqlCommand("spRegionList", connection);
                 cmd.CommandType = CommandType.StoredProcedure;
 
                 using (var dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
                     {
-                        ol.Add(new AdminModel()
+                        ol.Add(new RegionModel()
                         {
                             id = Convert.ToInt32(dr["id"]),
                             name = Convert.ToString(dr["name"]),
-                            surname = Convert.ToString(dr["surname"]),
-                            mail = Convert.ToString(dr["mail"]),
-                            region_id = Convert.ToInt32(dr["region_id"]),
-                            status = Convert.ToInt32(dr["status"]),
-                            user_config = Convert.ToBoolean(Convert.ToInt32(dr["user_config"])),
-                            provider_config = Convert.ToBoolean(Convert.ToInt32(dr["provider_config"])),
-                            branch_config = Convert.ToBoolean(Convert.ToInt32(dr["branch_config"])),
                         });
                     }
                 }
             }
             return ol;
         }
-        public AdminModel Read(int id)
+        public RegionModel Read(int id)
         {
-            var oc = new AdminModel();
+            var oc = new RegionModel();
             var conn = new Connection();
             using (var connection = new SqlConnection(conn.getStringSQL()))
             {
                 connection.Open();
-                SqlCommand cmd = new SqlCommand("spAdminRead", connection);
+                SqlCommand cmd = new SqlCommand("spRegionRead", connection);
                 cmd.Parameters.AddWithValue("id", id);
                 cmd.CommandType = CommandType.StoredProcedure;
 
@@ -55,19 +48,12 @@ namespace TURNERO.Data
                     {
                         oc.id = Convert.ToInt32(dr["id"]);
                         oc.name = Convert.ToString(dr["name"]);
-                        oc.surname = Convert.ToString(dr["surname"]);
-                        oc.mail = Convert.ToString(dr["mail"]);
-                        oc.region_id = Convert.ToInt32(dr["region_id"]);
-                        oc.status = Convert.ToInt32(dr["status"]);
-                        oc.user_config = Convert.ToBoolean(Convert.ToInt32(dr["user_config"]));
-                        oc.provider_config = Convert.ToBoolean(Convert.ToInt32(dr["provider_config"]));
-                        oc.branch_config = Convert.ToBoolean(Convert.ToInt32(dr["branch_config"]));
                     }
                 }
             }
             return oc;
         }
-        public bool Create(AdminModel oc, int created_by)
+        public bool Create(RegionModel oc)
         {
             bool res;
             try
@@ -76,16 +62,8 @@ namespace TURNERO.Data
                 using (var connection = new SqlConnection(conn.getStringSQL()))
                 {
                     connection.Open();
-                    SqlCommand cmd = new SqlCommand("spAdminCreate", connection);
-                    cmd.Parameters.AddWithValue("@user", oc.user);
-                    cmd.Parameters.AddWithValue("@mail", oc.mail);
-                    cmd.Parameters.AddWithValue("@pass", HelperText.Sha256(oc.user));
+                    SqlCommand cmd = new SqlCommand("spRegionCreate", connection);
                     cmd.Parameters.AddWithValue("@name", oc.name);
-                    cmd.Parameters.AddWithValue("@surname", oc.surname);
-                    cmd.Parameters.AddWithValue("@user_config", oc.user_config);
-                    cmd.Parameters.AddWithValue("@provider_config", oc.provider_config);
-                    cmd.Parameters.AddWithValue("@branch_config", oc.branch_config);
-                    cmd.Parameters.AddWithValue("@created_by", created_by);
                     SqlParameter status = new SqlParameter("@status", SqlDbType.Bit);
                     status.Direction = ParameterDirection.Output;
                     cmd.Parameters.Add(status);
@@ -104,7 +82,7 @@ namespace TURNERO.Data
             }
             return res;
         }
-        public bool Update(AdminModel oc, int updated_by)
+        public bool Update(RegionModel oc)
         {
             bool res;
             try
@@ -113,17 +91,9 @@ namespace TURNERO.Data
                 using (var connection = new SqlConnection(conn.getStringSQL()))
                 {
                     connection.Open();
-                    SqlCommand cmd = new SqlCommand("spAdminUpdate", connection);
+                    SqlCommand cmd = new SqlCommand("spRegionUpdate", connection);
                     cmd.Parameters.AddWithValue("@id", oc.id);
-                    cmd.Parameters.AddWithValue("@user", oc.user);
-                    cmd.Parameters.AddWithValue("@mail", oc.mail);
                     cmd.Parameters.AddWithValue("@name", oc.name);
-                    cmd.Parameters.AddWithValue("@surname", oc.surname);
-                    cmd.Parameters.AddWithValue("@user_config", oc.user_config);
-                    cmd.Parameters.AddWithValue("@provider_config", oc.provider_config);
-                    cmd.Parameters.AddWithValue("@branch_config", oc.branch_config);
-                    cmd.Parameters.AddWithValue("@status", oc.status);
-                    cmd.Parameters.AddWithValue("@updated_by", updated_by);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();
                 }
@@ -145,7 +115,7 @@ namespace TURNERO.Data
                 using (var connection = new SqlConnection(conn.getStringSQL()))
                 {
                     connection.Open();
-                    SqlCommand cmd = new SqlCommand("spAdminDelete", connection);
+                    SqlCommand cmd = new SqlCommand("spRegionDelete", connection);
                     cmd.Parameters.AddWithValue("id", id);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();

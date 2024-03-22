@@ -7,6 +7,7 @@
         public string code { get; set; }
         public string? business_name { get; set; }
         public string? commercial_mail { get; set; }
+        public string? it_mail { get; set; }
         public int region_id { get; set; }
         public string? address { get; set; }
         public string? longitude { get; set; }

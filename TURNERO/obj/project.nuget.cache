@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "flj43+rFxBP9FAxEm6nNnwCWloDPtxMX8lkaX6MFmCPRmJ3jArFZqO9xulzvnCARC3MCoQgwFpC7axJDiuDbpA==",
+  "dgSpecHash": "DfR+cpYJ9L40xR9uA4tITl3QhBNgsMls9SrvOV41saoKvs0TgWgyg0ectPImmijUfrgrVJBiYxch+n7z7dG8ug==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Usuario\\Desktop\\GIT\\TURNERO\\TURNERO\\TURNERO.csproj",
+  "projectFilePath": "C:\\Users\\Usuario\\Desktop\\TURNERO\\TURNERO\\TURNERO\\TURNERO.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Usuario\\.nuget\\packages\\humanizer\\2.14.1\\humanizer.2.14.1.nupkg.sha512",
     "C:\\Users\\Usuario\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",

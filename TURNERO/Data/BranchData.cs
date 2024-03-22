@@ -2,50 +2,53 @@
 using System.Data;
 using TURNERO.Helpers;
 using TURNERO.Models;
+using System.Net;
+using System.Xml.Linq;
 
 namespace TURNERO.Data
 {
-    public class AdminData
+    public class BranchData
     {
-        public List<AdminModel> List()
+        public List<BranchModel> List()
         {
-            var ol = new List<AdminModel>();
+            var ol = new List<BranchModel>();
             var conn = new Connection();
             using (var connection = new SqlConnection(conn.getStringSQL()))
             {
                 connection.Open();
-                SqlCommand cmd = new SqlCommand("spAdminList", connection);
+                SqlCommand cmd = new SqlCommand("spBranchList", connection);
                 cmd.CommandType = CommandType.StoredProcedure;
 
                 using (var dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
                     {
-                        ol.Add(new AdminModel()
+                        ol.Add(new BranchModel()
                         {
                             id = Convert.ToInt32(dr["id"]),
                             name = Convert.ToString(dr["name"]),
-                            surname = Convert.ToString(dr["surname"]),
-                            mail = Convert.ToString(dr["mail"]),
+                            code = Convert.ToString(dr["code"]),
+                            commercial_mail = Convert.ToString(dr["commercial_mail"]),
+                            it_mail = Convert.ToString(dr["commercial_mail"]),
                             region_id = Convert.ToInt32(dr["region_id"]),
-                            status = Convert.ToInt32(dr["status"]),
-                            user_config = Convert.ToBoolean(Convert.ToInt32(dr["user_config"])),
-                            provider_config = Convert.ToBoolean(Convert.ToInt32(dr["provider_config"])),
-                            branch_config = Convert.ToBoolean(Convert.ToInt32(dr["branch_config"])),
+                            address = Convert.ToString(dr["address"]),
+                            longitude = Convert.ToString(dr["longitude"]),
+                            latitude = Convert.ToString(dr["latitude"]),
+                            company_id = Convert.ToInt32(dr["company_id"]),
                         });
                     }
                 }
             }
             return ol;
         }
-        public AdminModel Read(int id)
+        public BranchModel Read(int id)
         {
-            var oc = new AdminModel();
+            var oc = new BranchModel();
             var conn = new Connection();
             using (var connection = new SqlConnection(conn.getStringSQL()))
             {
                 connection.Open();
-                SqlCommand cmd = new SqlCommand("spAdminRead", connection);
+                SqlCommand cmd = new SqlCommand("spBranchRead", connection);
                 cmd.Parameters.AddWithValue("id", id);
                 cmd.CommandType = CommandType.StoredProcedure;
 
@@ -55,19 +58,20 @@ namespace TURNERO.Data
                     {
                         oc.id = Convert.ToInt32(dr["id"]);
                         oc.name = Convert.ToString(dr["name"]);
-                        oc.surname = Convert.ToString(dr["surname"]);
-                        oc.mail = Convert.ToString(dr["mail"]);
+                        oc.code = Convert.ToString(dr["code"]);
+                        oc.commercial_mail = Convert.ToString(dr["commercial_mail"]);
+                        oc.it_mail = Convert.ToString(dr["commercial_mail"]);
                         oc.region_id = Convert.ToInt32(dr["region_id"]);
-                        oc.status = Convert.ToInt32(dr["status"]);
-                        oc.user_config = Convert.ToBoolean(Convert.ToInt32(dr["user_config"]));
-                        oc.provider_config = Convert.ToBoolean(Convert.ToInt32(dr["provider_config"]));
-                        oc.branch_config = Convert.ToBoolean(Convert.ToInt32(dr["branch_config"]));
+                        oc.address = Convert.ToString(dr["address"]);
+                        oc.longitude = Convert.ToString(dr["longitude"]);
+                        oc.latitude = Convert.ToString(dr["latitude"]);
+                        oc.company_id = Convert.ToInt32(dr["company_id"]);
                     }
                 }
             }
             return oc;
         }
-        public bool Create(AdminModel oc, int created_by)
+        public bool Create(BranchModel oc, int created_by)
         {
             bool res;
             try
@@ -76,15 +80,16 @@ namespace TURNERO.Data
                 using (var connection = new SqlConnection(conn.getStringSQL()))
                 {
                     connection.Open();
-                    SqlCommand cmd = new SqlCommand("spAdminCreate", connection);
-                    cmd.Parameters.AddWithValue("@user", oc.user);
-                    cmd.Parameters.AddWithValue("@mail", oc.mail);
-                    cmd.Parameters.AddWithValue("@pass", HelperText.Sha256(oc.user));
+                    SqlCommand cmd = new SqlCommand("spBranchCreate", connection);
                     cmd.Parameters.AddWithValue("@name", oc.name);
-                    cmd.Parameters.AddWithValue("@surname", oc.surname);
-                    cmd.Parameters.AddWithValue("@user_config", oc.user_config);
-                    cmd.Parameters.AddWithValue("@provider_config", oc.provider_config);
-                    cmd.Parameters.AddWithValue("@branch_config", oc.branch_config);
+                    cmd.Parameters.AddWithValue("@code", oc.code);
+                    cmd.Parameters.AddWithValue("@commercial_mail", oc.commercial_mail);
+                    cmd.Parameters.AddWithValue("@it_mail", oc.it_mail);
+                    cmd.Parameters.AddWithValue("@region_id", oc.region_id);
+                    cmd.Parameters.AddWithValue("@address", oc.address);
+                    cmd.Parameters.AddWithValue("@longitude", oc.longitude);
+                    cmd.Parameters.AddWithValue("@latitude", oc.latitude);
+                    cmd.Parameters.AddWithValue("@company_id", oc.company_id);
                     cmd.Parameters.AddWithValue("@created_by", created_by);
                     SqlParameter status = new SqlParameter("@status", SqlDbType.Bit);
                     status.Direction = ParameterDirection.Output;
@@ -104,7 +109,7 @@ namespace TURNERO.Data
             }
             return res;
         }
-        public bool Update(AdminModel oc, int updated_by)
+        public bool Update(BranchModel oc, int updated_by)
         {
             bool res;
             try
@@ -113,16 +118,17 @@ namespace TURNERO.Data
                 using (var connection = new SqlConnection(conn.getStringSQL()))
                 {
                     connection.Open();
-                    SqlCommand cmd = new SqlCommand("spAdminUpdate", connection);
+                    SqlCommand cmd = new SqlCommand("spBranchUpdate", connection);
                     cmd.Parameters.AddWithValue("@id", oc.id);
-                    cmd.Parameters.AddWithValue("@user", oc.user);
-                    cmd.Parameters.AddWithValue("@mail", oc.mail);
                     cmd.Parameters.AddWithValue("@name", oc.name);
-                    cmd.Parameters.AddWithValue("@surname", oc.surname);
-                    cmd.Parameters.AddWithValue("@user_config", oc.user_config);
-                    cmd.Parameters.AddWithValue("@provider_config", oc.provider_config);
-                    cmd.Parameters.AddWithValue("@branch_config", oc.branch_config);
-                    cmd.Parameters.AddWithValue("@status", oc.status);
+                    cmd.Parameters.AddWithValue("@code", oc.code);
+                    cmd.Parameters.AddWithValue("@commercial_mail", oc.commercial_mail);
+                    cmd.Parameters.AddWithValue("@it_mail", oc.it_mail);
+                    cmd.Parameters.AddWithValue("@region_id", oc.region_id);
+                    cmd.Parameters.AddWithValue("@address", oc.address);
+                    cmd.Parameters.AddWithValue("@longitude", oc.longitude);
+                    cmd.Parameters.AddWithValue("@latitude", oc.latitude);
+                    cmd.Parameters.AddWithValue("@company_id", oc.company_id);
                     cmd.Parameters.AddWithValue("@updated_by", updated_by);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();
@@ -145,7 +151,7 @@ namespace TURNERO.Data
                 using (var connection = new SqlConnection(conn.getStringSQL()))
                 {
                     connection.Open();
-                    SqlCommand cmd = new SqlCommand("spAdminDelete", connection);
+                    SqlCommand cmd = new SqlCommand("spBranchDelete", connection);
                     cmd.Parameters.AddWithValue("id", id);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();
