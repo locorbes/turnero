@@ -62,10 +62,11 @@ CREATE PROC spAdminPassUpdate(
 	END
 GO
 
-CREATE PROCEDURE spAdminList
+CREATE PROCEDURE spAdminList(
     @init INT = 0,
     @rows INT = 100,
     @order_row NVARCHAR(100) = 'id'
+	)
 AS
 	BEGIN
 		SET NOCOUNT ON;
@@ -79,7 +80,6 @@ AS
 					WHERE RowNum BETWEEN ' + CAST(@init + 1 AS NVARCHAR(10)) + ' AND ' + CAST(@init + @rows AS NVARCHAR(10)) + ';';
 
 		EXEC sp_executesql @sql;
-
 	END
 GO
 
@@ -157,7 +157,7 @@ SELECT @status
 GO
 
 /*REGIONS*/
-CREATE TABLE regions (
+CREATE TABLE regions(
     id INT PRIMARY KEY IDENTITY(1, 1),
     [name] VARCHAR(100) NOT NULL
 )
@@ -166,10 +166,11 @@ GO
 INSERT INTO regions([name]) VALUES('ARGENTINA'), ('URUGUAY')
 GO
 
-CREATE PROCEDURE spRegionList
+CREATE PROCEDURE spRegionList(
     @init INT = 0,
     @rows INT = 100,
     @order_row NVARCHAR(100) = 'id'
+	)
 AS
 	BEGIN
 		SET NOCOUNT ON;
@@ -183,7 +184,6 @@ AS
 					WHERE RowNum BETWEEN ' + CAST(@init + 1 AS NVARCHAR(10)) + ' AND ' + CAST(@init + @rows AS NVARCHAR(10)) + ';';
 
 		EXEC sp_executesql @sql;
-
 	END
 GO
 
@@ -240,7 +240,7 @@ CREATE PROC spRegionDelete(
 GO
 
 /*PROVIDERS*/
-CREATE TABLE providers (
+CREATE TABLE providers(
   id  INT PRIMARY KEY IDENTITY(1, 1),
   code INT DEFAULT NULL,
   cuit VARCHAR(50) DEFAULT NULL UNIQUE,
@@ -302,10 +302,11 @@ CREATE PROC spProviderPassUpdate(
 	END
 GO
 
-CREATE PROCEDURE spProviderList
+CREATE PROCEDURE spProviderList(
     @init INT = 0,
     @rows INT = 100,
     @order_row NVARCHAR(100) = 'id'
+	)
 AS
 	BEGIN
 		SET NOCOUNT ON;
@@ -319,7 +320,6 @@ AS
 					WHERE RowNum BETWEEN ' + CAST(@init + 1 AS NVARCHAR(10)) + ' AND ' + CAST(@init + @rows AS NVARCHAR(10)) + ';';
 
 		EXEC sp_executesql @sql;
-
 	END
 GO
 
@@ -378,14 +378,14 @@ CREATE PROC spProviderUpdate(
 	@cuit VARCHAR(50),
 	@commercial_mail VARCHAR(50),
 	@region_id INT,
-	@code INT,
-	@business_name VARCHAR(50),
-	@name VARCHAR(50),
-	@it_mail VARCHAR(50),
-	@origin VARCHAR(50),
-    @address VARCHAR(50),
-	@observations VARCHAR(255),
-	@fc_required TINYINT,
+	@code INT = NULL,
+	@business_name VARCHAR(50) = NULL,
+	@name VARCHAR(50) = NULL,
+	@it_mail VARCHAR(50) = NULL,
+	@origin VARCHAR(50) = NULL,
+    @address VARCHAR(50) = NULL,
+	@observations VARCHAR(255) = NULL,
+	@fc_required TINYINT = NULL,
 	@updated_by INT
 	)
 	AS
@@ -404,7 +404,7 @@ CREATE PROC spProviderDelete(
 GO
 
 /*BRANCHS*/
-CREATE TABLE branchs (
+CREATE TABLE branchs(
   id  INT PRIMARY KEY IDENTITY(1, 1),
   [name] VARCHAR(50) DEFAULT NULL,
   code VARCHAR(50) DEFAULT NULL,
@@ -423,10 +423,11 @@ CREATE TABLE branchs (
 )
 GO
 
-CREATE PROCEDURE spBranchList
+CREATE PROCEDURE spBranchList(
     @init INT = 0,
     @rows INT = 100,
     @order_row NVARCHAR(100) = 'id'
+	)
 AS
 	BEGIN
 		SET NOCOUNT ON;
@@ -440,7 +441,6 @@ AS
 					WHERE RowNum BETWEEN ' + CAST(@init + 1 AS NVARCHAR(10)) + ' AND ' + CAST(@init + @rows AS NVARCHAR(10)) + ';';
 
 		EXEC sp_executesql @sql;
-
 	END
 GO
 
@@ -510,5 +510,373 @@ CREATE PROC spBranchDelete(
 	AS
 	BEGIN
 		DELETE FROM branchs WHERE id = @id
+	END
+GO
+
+/*TURNS*/
+CREATE TABLE turns(
+  id  INT PRIMARY KEY IDENTITY(1, 1),
+  provider_id INT,
+  branch_id INT,
+  [time] DATETIME,
+  entry_time DATETIME,
+  [absent] BIT,
+  [status] INT,
+  observations VARCHAR(255) NULL,
+  created_at DATETIME DEFAULT NULL,
+  updated_at DATETIME DEFAULT NULL,
+  created_by INT DEFAULT NULL,
+  updated_by INT DEFAULT NULL,
+  CONSTRAINT FK_turns_provider FOREIGN KEY (provider_id) REFERENCES providers(id),
+  CONSTRAINT FK_turns_branch FOREIGN KEY (branch_id) REFERENCES branchs(id)
+)
+GO
+
+CREATE PROCEDURE spTurnList(
+    @init INT = 0,
+    @rows INT = 100,
+    @order_row NVARCHAR(100) = 'id'
+	)
+AS
+	BEGIN
+		SET NOCOUNT ON;
+
+		DECLARE @sql NVARCHAR(MAX);
+
+		SET @sql = 'SELECT * FROM (
+						SELECT ROW_NUMBER() OVER (ORDER BY ' + @order_row + ') AS RowNum, *
+							FROM turns
+						) AS Sub
+					WHERE RowNum BETWEEN ' + CAST(@init + 1 AS NVARCHAR(10)) + ' AND ' + CAST(@init + @rows AS NVARCHAR(10)) + ';';
+
+		EXEC sp_executesql @sql;
+	END
+GO
+
+--EXEC spTurnList @init = 0, @rows = 1, @order_row = 'id';
+
+
+CREATE PROC spTurnRead(
+	@id INT
+	)
+	AS
+	BEGIN
+		SELECT * FROM turns WHERE id = @id
+	END
+GO
+
+CREATE PROC spTurnCreate(
+	@provider_id INT,
+	@branch_id INT,
+	@time DATETIME,
+	@entry_time DATETIME,
+	@absent BIT,
+	@observations VARCHAR(255) = NULL,
+	@status BIT OUTPUT,
+	@message VARCHAR(100) OUTPUT,
+	@created_by INT = 1
+	)
+	AS
+	BEGIN
+		IF(NOT EXISTS(SELECT * FROM turns WHERE branch_id = @branch_id AND [time] = @time))
+		BEGIN
+			INSERT INTO turns(provider_id, branch_id, [time], entry_time, [absent], [status], observations, created_by, created_at) VALUES(@provider_id, @branch_id, @time, @entry_time, @absent, 1, @observations, @created_by, GETDATE())
+			SET @status = 1
+			SET @message = 'El turno ha sido registrado'
+		END
+		ELSE
+		BEGIN
+			SET @status = 0
+			SET @message = 'El turno ya se encuentra registrado'
+		END
+	END
+GO
+
+CREATE PROC spTurnUpdate(
+	@id INT,
+	@provider_id INT,
+	@branch_id INT,
+	@time DATETIME,
+	@entry_time DATETIME,
+	@absent BIT,
+	@status BIT,
+	@observations VARCHAR(255) = NULL,
+	@updated_by INT
+	)
+	AS
+	BEGIN
+		UPDATE turns SET provider_id = @provider_id, branch_id = @branch_id, [time] = @time, entry_time = @entry_time, [absent] = @absent, [status] = @status, observations = @observations, updated_by = @updated_by, updated_at = GETDATE() WHERE id = @id
+	END
+GO
+
+CREATE PROC spTurnDelete(
+	@id INT
+	)
+	AS
+	BEGIN
+		DELETE FROM turns WHERE id = @id
+	END
+GO
+
+/*FILES*/
+CREATE TABLE files(
+  id  INT PRIMARY KEY IDENTITY(1, 1),
+  turn_id INT,
+  code VARCHAR(50),
+  CONSTRAINT FK_files_turn FOREIGN KEY (turn_id) REFERENCES turns(id)
+)
+GO
+
+CREATE PROCEDURE spFileList(
+    @init INT = 0,
+    @rows INT = 100,
+    @order_row NVARCHAR(100) = 'id'
+	)
+AS
+	BEGIN
+		SET NOCOUNT ON;
+
+		DECLARE @sql NVARCHAR(MAX);
+
+		SET @sql = 'SELECT * FROM (
+						SELECT ROW_NUMBER() OVER (ORDER BY ' + @order_row + ') AS RowNum, *
+							FROM files
+						) AS Sub
+					WHERE RowNum BETWEEN ' + CAST(@init + 1 AS NVARCHAR(10)) + ' AND ' + CAST(@init + @rows AS NVARCHAR(10)) + ';';
+
+		EXEC sp_executesql @sql;
+	END
+GO
+
+--EXEC spFileList @init = 0, @rows = 1, @order_row = 'id';
+
+CREATE PROC spFileRead(
+	@id INT
+	)
+	AS
+	BEGIN
+		SELECT * FROM files WHERE id = @id
+	END
+GO
+
+CREATE PROC spFileCreate(
+	@turn_id INT,
+	@code VARCHAR(50) = NULL,
+	@status BIT OUTPUT,
+	@message VARCHAR(100) OUTPUT
+	)
+	AS
+	BEGIN
+		INSERT INTO files(turn_id, code) VALUES(@turn_id, @code)
+		SET @status = 1
+		SET @message = 'El archivo ha sido registrado'
+	END
+GO
+
+CREATE PROC spFileUpdate(
+	@id INT,
+	@turn_id INT,
+	@code VARCHAR(50) = NULL
+	)
+	AS
+	BEGIN
+		UPDATE files SET turn_id = @turn_id, code = @code WHERE id = @id
+	END
+GO
+
+CREATE PROC spFileDelete(
+	@id INT
+	)
+	AS
+	BEGIN
+		DELETE FROM files WHERE id = @id
+	END
+GO
+
+/*ADMIN_BRANCH*/
+CREATE TABLE admin_branch(
+  id  INT PRIMARY KEY IDENTITY(1, 1),
+  admin_id INT,
+  branch_id INT,
+  profile_id INT,
+  confirm BIT,
+  created_at DATETIME,
+  updated_at DATETIME,
+  created_by INT,
+  updated_by INT,
+  CONSTRAINT FK_admin_branch FOREIGN KEY (admin_id) REFERENCES admins(id),
+  CONSTRAINT FK_branch_admin FOREIGN KEY (branch_id) REFERENCES branchs(id)
+) 
+CREATE PROCEDURE spAdminBranchList(
+    @init INT = 0,
+    @rows INT = 100,
+    @order_row NVARCHAR(100) = 'id'
+	)
+AS
+	BEGIN
+		SET NOCOUNT ON;
+
+		DECLARE @sql NVARCHAR(MAX);
+
+		SET @sql = 'SELECT * FROM (
+						SELECT ROW_NUMBER() OVER (ORDER BY ' + @order_row + ') AS RowNum, *
+							FROM admin_branch
+						) AS Sub
+					WHERE RowNum BETWEEN ' + CAST(@init + 1 AS NVARCHAR(10)) + ' AND ' + CAST(@init + @rows AS NVARCHAR(10)) + ';';
+
+		EXEC sp_executesql @sql;
+	END
+GO
+
+--EXEC spAdminBranchList @init = 0, @rows = 1, @order_row = 'id';
+
+
+CREATE PROC spAdminBranchRead(
+	@id INT
+	)
+	AS
+	BEGIN
+		SELECT * FROM admin_branch WHERE id = @id
+	END
+GO
+
+CREATE PROC spAdminBranchCreate(
+	@admin_id INT,
+	@branch_id INT,
+	@profile_id INT,
+	@confirm BIT,
+	@status BIT OUTPUT,
+	@message VARCHAR(100) OUTPUT,
+	@created_by INT = 1
+	)
+	AS
+	BEGIN
+		IF(NOT EXISTS(SELECT * FROM admin_branch WHERE admin_id = @admin_id AND branch_id = @branch_id))
+		BEGIN
+			INSERT INTO admin_branch(admin_id, branch_id, profile_id, confirm, created_by, created_at) VALUES(@admin_id, @branch_id, @profile_id, @confirm, @created_by, GETDATE())
+			SET @status = 1
+			SET @message = 'El admin y la sucursal ha sido registrado'
+		END
+		ELSE
+		BEGIN
+			SET @status = 0
+			SET @message = 'El admin y la sucursal ya se encuentran registrado'
+		END
+	END
+GO
+
+CREATE PROC spAdminBranchUpdate(
+	@id INT,
+	@admin_id INT,
+	@branch_id INT,
+	@profile_id INT,
+	@confirm BIT,
+	@updated_by INT
+	)
+	AS
+	BEGIN
+		UPDATE admin_branch SET admin_id = @admin_id, branch_id = @branch_id, @profile_id = @profile_id, confirm = @confirm, updated_by = @updated_by, updated_at = GETDATE() WHERE id = @id
+	END
+GO
+
+CREATE PROC spAdminBranchDelete(
+	@id INT
+	)
+	AS
+	BEGIN
+		DELETE FROM admin_branch WHERE id = @id
+	END
+GO
+
+/*PROVIDER_BRANCH*/
+CREATE TABLE provider_branch(
+  id  INT PRIMARY KEY IDENTITY(1, 1),
+  provider_id INT,
+  branch_id INT,
+  profile_id INT,
+  created_at DATETIME,
+  updated_at DATETIME,
+  created_by INT,
+  updated_by INT,
+  CONSTRAINT FK_provider_branch FOREIGN KEY (provider_id) REFERENCES providers(id),
+  CONSTRAINT FK_branch_provider FOREIGN KEY (branch_id) REFERENCES branchs(id)
+) 
+ 
+CREATE PROCEDURE spProviderBranchList(
+    @init INT = 0,
+    @rows INT = 100,
+    @order_row NVARCHAR(100) = 'id'
+	)
+AS
+	BEGIN
+		SET NOCOUNT ON;
+
+		DECLARE @sql NVARCHAR(MAX);
+
+		SET @sql = 'SELECT * FROM (
+						SELECT ROW_NUMBER() OVER (ORDER BY ' + @order_row + ') AS RowNum, *
+							FROM provider_branch
+						) AS Sub
+					WHERE RowNum BETWEEN ' + CAST(@init + 1 AS NVARCHAR(10)) + ' AND ' + CAST(@init + @rows AS NVARCHAR(10)) + ';';
+
+		EXEC sp_executesql @sql;
+	END
+GO
+
+--EXEC spProviderBranchList @init = 0, @rows = 1, @order_row = 'id';
+
+
+CREATE PROC spProviderBranchRead(
+	@id INT
+	)
+	AS
+	BEGIN
+		SELECT * FROM provider_branch WHERE id = @id
+	END
+GO
+
+CREATE PROC spProviderBranchCreate(
+	@provider_id INT,
+	@branch_id INT,
+	@profile_id INT,
+	@status BIT OUTPUT,
+	@message VARCHAR(100) OUTPUT,
+	@created_by INT = 1
+	)
+	AS
+	BEGIN
+		IF(NOT EXISTS(SELECT * FROM provider_branch WHERE provider_id = @provider_id AND branch_id = @branch_id))
+		BEGIN
+			INSERT INTO provider_branch(provider_id, branch_id, profile_id, created_by, created_at) VALUES(@provider_id, @branch_id, @profile_id, @created_by, GETDATE())
+			SET @status = 1
+			SET @message = 'El proveedor y la sucursal ha sido registrado'
+		END
+		ELSE
+		BEGIN
+			SET @status = 0
+			SET @message = 'El proveedor y la sucursal ya se encuentran registrado'
+		END
+	END
+GO
+
+CREATE PROC spProviderBranchUpdate(
+	@id INT,
+	@provider_id INT,
+	@branch_id INT,
+	@profile_id INT,
+	@updated_by INT
+	)
+	AS
+	BEGIN
+		UPDATE provider_branch SET provider_id = @provider_id, branch_id = @branch_id, @profile_id = @profile_id, updated_by = @updated_by, updated_at = GETDATE() WHERE id = @id
+	END
+GO
+
+CREATE PROC spProviderBranchDelete(
+	@id INT
+	)
+	AS
+	BEGIN
+		DELETE FROM provider_branch WHERE id = @id
 	END
 GO

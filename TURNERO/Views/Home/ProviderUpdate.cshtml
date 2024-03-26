@@ -1,0 +1,77 @@
+﻿@model ProviderModel
+@{
+    ViewData["Title"] = "Editar proveedor";
+    ViewData["Type"] = ViewBag.Type;
+    ViewData["Id"] = ViewBag.Id;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        Editar proveedor
+    </div>
+    <div class="card-body">
+        <form asp-action="ProviderUpdate" asp-controller="Home" method="post">
+            <input asp-for="id" type="hidden">
+            <div class="row">
+                <div class="col-2 mb-3">
+                    <label for="InputCuit" class="form-label">Cuit*</label>
+                    <input asp-for="cuit" type="text" class="form-control" id="InputCuit" required>
+                </div>
+                <div class="col-2 mb-3">
+                    <label for="InputCode" class="form-label">Código*</label>
+                    <input asp-for="code" type="text" class="form-control" id="InputCode" required>
+                </div>
+                <div class="col-4 mb-3">
+                    <label for="InputName" class="form-label">Nombre*</label>
+                    <input asp-for="name" type="text" class="form-control" id="InputName" required>
+                </div>
+                <div class="col-4 mb-3">
+                    <label for="InputBusinessName" class="form-label">Nombre de fantasía</label>
+                    <input asp-for="business_name" type="text" class="form-control" id="InputBusinessName">
+                </div>
+                <div class="col-4 mb-3">
+                    <label for="InputCommercialMail" class="form-label">Mail comercial*</label>
+                    <input asp-for="commercial_mail" type="mail" class="form-control" id="InputCommercialMail" required>
+                </div>
+                <div class="col-4 mb-3">
+                    <label for="InputITMail" class="form-label">Mail TI</label>
+                    <input asp-for="it_mail" type="mail" class="form-control" id="InputITMail">
+                </div>
+                <div class="col-2 mb-3">
+                    <label for="InputRegion" class="form-label">Región</label>
+                    <select asp-for="region_id" class="form-select" id="InputRegion">
+                        <option value="1">ARGENTINA</option>
+                        <option value="2">URUGUAY</option>
+                    </select>
+                </div>
+                <div class="col-2 mb-3">
+                    <label for="InputOrigin" class="form-label">Origen</label>
+                    <input asp-for="origin" type="mail" class="form-control" id="InputOrigin">
+                </div>
+                <div class="col-4 mb-3">
+                    <label for="InputAdress" class="form-label">Dirección</label>
+                    <input asp-for="address" type="mail" class="form-control" id="InputAdress">
+                </div>
+                <div class="col-6 mb-3">
+                    <label for="InputObservations" class="form-label">Observaciones</label>
+                    <input asp-for="observations" type="number" class="form-control" id="InputObservations">
+                </div>
+                <div class="col-2 mb-3">
+                    <label for="InputFCRequired" class="form-label">Requiere FC</label>
+                    <select asp-for="fc_required" class="form-select" id="InputFCRequired">
+                        <option value="0">NO</option>
+                        <option value="1">SI</option>
+                    </select>
+                </div>
+                <div class="form-text mb-3"><b>Los campos marcados con * son obligatorios.</b></div>
+                <hr />
+                <div class="col-12 text-center mb-3">
+                    <button type="submit" class="btn btn-primary bg-blue mb-3">Guardar cambios</button>
+                    <br />
+                    <a asp-action="ProviderList" asp-controller="Home">Volver a la lista de proveedores</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

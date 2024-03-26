@@ -20,3 +20,8 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.bg-blue {
+    background-color: #0558A5;
+    border: 2px;
+}

@@ -26,17 +26,17 @@ namespace TURNERO.Data
                         ol.Add(new ProviderModel()
                         {
                             id = Convert.ToInt32(dr["id"]),
-                            code = Convert.ToInt32(dr["code"] ?? 0),
+                            code = dr.IsDBNull(dr.GetOrdinal("code")) ? 0 : Convert.ToInt32(dr["code"]),
                             cuit = Convert.ToString(dr["cuit"]),
                             business_name = Convert.ToString(dr["business_name"]),
                             name = Convert.ToString(dr["name"]),
                             commercial_mail = Convert.ToString(dr["commercial_mail"]),
                             it_mail = Convert.ToString(dr["it_mail"]),
-                            region_id = Convert.ToInt32(dr["region_id"] ?? 0),
+                            region_id = dr.IsDBNull(dr.GetOrdinal("region_id")) ? 0 : Convert.ToInt32(dr["region_id"]),
                             origin = Convert.ToString(dr["origin"]),
                             address = Convert.ToString(dr["address"]),
                             observations = Convert.ToString(dr["observations"]),
-                            fc_required = Convert.ToInt32(dr["fc_required"] ?? 0),
+                            fc_required = dr.IsDBNull(dr.GetOrdinal("fc_required")) ? 0 : Convert.ToInt32(dr["fc_required"]),
                         });
                     }
                 }
@@ -59,17 +59,17 @@ namespace TURNERO.Data
                     while (dr.Read())
                     {
                         oc.id = Convert.ToInt32(dr["id"]);
-                        oc.code = Convert.ToInt32(dr["code"] ?? 0);
+                        oc.code = dr.IsDBNull(dr.GetOrdinal("code")) ? 0 : Convert.ToInt32(dr["code"]);
                         oc.cuit = Convert.ToString(dr["cuit"]);
                         oc.business_name = Convert.ToString(dr["business_name"]);
                         oc.name = Convert.ToString(dr["name"]);
                         oc.commercial_mail = Convert.ToString(dr["commercial_mail"]);
                         oc.it_mail = Convert.ToString(dr["it_mail"]);
-                        oc.region_id = Convert.ToInt32(dr["region_id"] ?? 0);
+                        oc.region_id = dr.IsDBNull(dr.GetOrdinal("region_id")) ? 0 : Convert.ToInt32(dr["region_id"]);
                         oc.origin = Convert.ToString(dr["origin"]);
                         oc.address = Convert.ToString(dr["address"]);
                         oc.observations = Convert.ToString(dr["observations"]);
-                        oc.fc_required = Convert.ToInt32(dr["fc_required"] ?? 0);
+                        oc.fc_required = dr.IsDBNull(dr.GetOrdinal("fc_required")) ? 0 : Convert.ToInt32(dr["fc_required"]);
                     }
                 }
             }

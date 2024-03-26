@@ -1,0 +1,26 @@
+﻿@model ProviderModel
+@{
+    ViewData["Title"] = "Eliminar proveedor";
+    ViewData["Type"] = ViewBag.Type;
+    ViewData["Id"] = ViewBag.Id;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        Eliminar contacto
+    </div>
+    <div class="card-body">
+        <form asp-action="ProviderDelete" asp-controller="Home" method="post">
+            <input asp-for="id" type="hidden">
+            <div class="text-center">
+                <div class="alert alert-danger" role="alert">
+                    ¿Desea eliminar el proveedor con el CUIT @Html.DisplayTextFor(m => m.cuit)?
+                </div>
+                <button type="submit" class="btn btn-danger bg-blue mb-3">Eliminar</button>
+                <br />
+                <a asp-action="ProviderList" asp-controller="Home">Volver a la lista de proveedores</a>
+            </div>
+        </form>
+    </div>
+</div>
