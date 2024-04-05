@@ -8,43 +8,45 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace TURNERO.Data
 {
-    public class AdminBranchData
+    public class ScheduleExceptionData
     {
-        public List<AdminBranchModel> List()
+        public List<ScheduleExceptionModel> List()
         {
-            var ol = new List<AdminBranchModel>();
+            var ol = new List<ScheduleExceptionModel>();
             var conn = new Connection();
             using (var connection = new SqlConnection(conn.getStringSQL()))
             {
                 connection.Open();
-                SqlCommand cmd = new SqlCommand("spAdminBranchList", connection);
+                SqlCommand cmd = new SqlCommand("spScheduleExceptionList", connection);
                 cmd.CommandType = CommandType.StoredProcedure;
 
                 using (var dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
                     {
-                        ol.Add(new AdminBranchModel()
+                        ol.Add(new ScheduleExceptionModel()
                         {
                             id = Convert.ToInt32(dr["id"]),
-                            admin_id = Convert.ToInt32(dr["admin_id"]),
                             branch_id = Convert.ToInt32(dr["branch_id"]),
-                            profile_id = Convert.ToInt32(dr["profile_id"]),
-                            confirm = Convert.ToBoolean(Convert.ToInt32(dr["confirm"])),
+                            day = Convert.ToInt32(dr["day"]),
+                            since = (TimeSpan)dr["since"],
+                            until = (TimeSpan)dr["until"],
+                            turn_minutes = Convert.ToInt32(dr["turn_minutes"]),
+                            turn_maximum = Convert.ToInt32(dr["turn_maximum"]),
                         });
                     }
                 }
             }
             return ol;
         }
-        public AdminBranchModel Read(int id)
+        public ScheduleExceptionModel Read(int id)
         {
-            var oc = new AdminBranchModel();
+            var oc = new ScheduleExceptionModel();
             var conn = new Connection();
             using (var connection = new SqlConnection(conn.getStringSQL()))
             {
                 connection.Open();
-                SqlCommand cmd = new SqlCommand("spAdminBranchRead", connection);
+                SqlCommand cmd = new SqlCommand("spScheduleExceptionRead", connection);
                 cmd.Parameters.AddWithValue("id", id);
                 cmd.CommandType = CommandType.StoredProcedure;
 
@@ -53,16 +55,18 @@ namespace TURNERO.Data
                     while (dr.Read())
                     {
                         oc.id = Convert.ToInt32(dr["id"]);
-                        oc.admin_id = Convert.ToInt32(dr["admin_id"]);
                         oc.branch_id = Convert.ToInt32(dr["branch_id"]);
-                        oc.profile_id = Convert.ToInt32(dr["profile_id"]);
-                        oc.confirm = Convert.ToBoolean(Convert.ToInt32(dr["confirm"]));
+                        oc.day = Convert.ToInt32(dr["day"]);
+                        oc.since = (TimeSpan)dr["since"];
+                        oc.until = (TimeSpan)dr["until"];
+                        oc.turn_minutes = Convert.ToInt32(dr["turn_minutes"]);
+                        oc.turn_maximum = Convert.ToInt32(dr["turn_maximum"]);
                     }
                 }
             }
             return oc;
         }
-        public bool Create(AdminBranchModel oc, int created_by)
+        public bool Create(ScheduleExceptionModel oc, int created_by)
         {
             bool res;
             try
@@ -71,11 +75,13 @@ namespace TURNERO.Data
                 using (var connection = new SqlConnection(conn.getStringSQL()))
                 {
                     connection.Open();
-                    SqlCommand cmd = new SqlCommand("spAdminBranchCreate", connection);
-                    cmd.Parameters.AddWithValue("@admin_id", oc.admin_id);
+                    SqlCommand cmd = new SqlCommand("spScheduleExceptionCreate", connection);
                     cmd.Parameters.AddWithValue("@branch_id", oc.branch_id);
-                    cmd.Parameters.AddWithValue("@profile_id", oc.profile_id);
-                    cmd.Parameters.AddWithValue("@confirm", oc.confirm);
+                    cmd.Parameters.AddWithValue("@day", oc.day);
+                    cmd.Parameters.AddWithValue("@since", oc.since);
+                    cmd.Parameters.AddWithValue("@until", oc.until);
+                    cmd.Parameters.AddWithValue("@turn_minutes", oc.turn_minutes);
+                    cmd.Parameters.AddWithValue("@turn_maximum", oc.turn_maximum);
                     cmd.Parameters.AddWithValue("@created_by", created_by);
                     SqlParameter status = new SqlParameter("@status", SqlDbType.Bit);
                     status.Direction = ParameterDirection.Output;
@@ -95,7 +101,7 @@ namespace TURNERO.Data
             }
             return res;
         }
-        public bool Update(AdminBranchModel oc, int updated_by)
+        public bool Update(ScheduleExceptionModel oc, int updated_by)
         {
             bool res;
             try
@@ -104,12 +110,14 @@ namespace TURNERO.Data
                 using (var connection = new SqlConnection(conn.getStringSQL()))
                 {
                     connection.Open();
-                    SqlCommand cmd = new SqlCommand("spAdminBranchUpdate", connection);
+                    SqlCommand cmd = new SqlCommand("spScheduleExceptionUpdate", connection);
                     cmd.Parameters.AddWithValue("@id", oc.id);
-                    cmd.Parameters.AddWithValue("@admin_id", oc.admin_id);
                     cmd.Parameters.AddWithValue("@branch_id", oc.branch_id);
-                    cmd.Parameters.AddWithValue("@profile_id", oc.profile_id);
-                    cmd.Parameters.AddWithValue("@confirm", oc.confirm);
+                    cmd.Parameters.AddWithValue("@day", oc.day);
+                    cmd.Parameters.AddWithValue("@since", oc.since);
+                    cmd.Parameters.AddWithValue("@until", oc.until);
+                    cmd.Parameters.AddWithValue("@turn_minutes", oc.turn_minutes);
+                    cmd.Parameters.AddWithValue("@turn_maximum", oc.turn_maximum);
                     cmd.Parameters.AddWithValue("@updated_by", updated_by);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();
@@ -132,7 +140,7 @@ namespace TURNERO.Data
                 using (var connection = new SqlConnection(conn.getStringSQL()))
                 {
                     connection.Open();
-                    SqlCommand cmd = new SqlCommand("spAdminBranchDelete", connection);
+                    SqlCommand cmd = new SqlCommand("spScheduleExceptionDelete", connection);
                     cmd.Parameters.AddWithValue("id", id);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();

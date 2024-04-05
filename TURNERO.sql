@@ -707,6 +707,8 @@ CREATE TABLE admin_branch(
   CONSTRAINT FK_admin_branch FOREIGN KEY (admin_id) REFERENCES admins(id),
   CONSTRAINT FK_branch_admin FOREIGN KEY (branch_id) REFERENCES branchs(id)
 ) 
+GO
+
 CREATE PROCEDURE spAdminBranchList(
     @init INT = 0,
     @rows INT = 100,
@@ -775,7 +777,7 @@ CREATE PROC spAdminBranchUpdate(
 	)
 	AS
 	BEGIN
-		UPDATE admin_branch SET admin_id = @admin_id, branch_id = @branch_id, @profile_id = @profile_id, confirm = @confirm, updated_by = @updated_by, updated_at = GETDATE() WHERE id = @id
+		UPDATE admin_branch SET admin_id = @admin_id, branch_id = @branch_id, profile_id = @profile_id, confirm = @confirm, updated_by = @updated_by, updated_at = GETDATE() WHERE id = @id
 	END
 GO
 
@@ -801,7 +803,8 @@ CREATE TABLE provider_branch(
   CONSTRAINT FK_provider_branch FOREIGN KEY (provider_id) REFERENCES providers(id),
   CONSTRAINT FK_branch_provider FOREIGN KEY (branch_id) REFERENCES branchs(id)
 ) 
- 
+GO
+
 CREATE PROCEDURE spProviderBranchList(
     @init INT = 0,
     @rows INT = 100,
@@ -868,7 +871,7 @@ CREATE PROC spProviderBranchUpdate(
 	)
 	AS
 	BEGIN
-		UPDATE provider_branch SET provider_id = @provider_id, branch_id = @branch_id, @profile_id = @profile_id, updated_by = @updated_by, updated_at = GETDATE() WHERE id = @id
+		UPDATE provider_branch SET provider_id = @provider_id, branch_id = @branch_id, profile_id = @profile_id, updated_by = @updated_by, updated_at = GETDATE() WHERE id = @id
 	END
 GO
 
@@ -878,5 +881,209 @@ CREATE PROC spProviderBranchDelete(
 	AS
 	BEGIN
 		DELETE FROM provider_branch WHERE id = @id
+	END
+GO
+
+/*SCHEDULE_CONFIG*/
+CREATE TABLE schedule_config(
+  id  INT PRIMARY KEY IDENTITY(1, 1),
+  branch_id INT,
+  [day] INT,
+  since TIME(6),
+  until TIME(6),
+  turn_minutes INT,
+  turn_maximum INT,
+  created_at DATETIME,
+  updated_at DATETIME,
+  created_by INT,
+  updated_by INT,
+  CONSTRAINT FK_schedule_config_branch FOREIGN KEY (branch_id) REFERENCES branchs(id)
+) 
+GO
+
+CREATE PROCEDURE spScheduleConfigList(
+    @init INT = 0,
+    @rows INT = 100,
+    @order_row NVARCHAR(100) = 'id'
+	)
+AS
+	BEGIN
+		SET NOCOUNT ON;
+
+		DECLARE @sql NVARCHAR(MAX);
+
+		SET @sql = 'SELECT * FROM (
+						SELECT ROW_NUMBER() OVER (ORDER BY ' + @order_row + ') AS RowNum, *
+							FROM schedule_config
+						) AS Sub
+					WHERE RowNum BETWEEN ' + CAST(@init + 1 AS NVARCHAR(10)) + ' AND ' + CAST(@init + @rows AS NVARCHAR(10)) + ';';
+
+		EXEC sp_executesql @sql;
+	END
+GO
+
+--EXEC spScheduleConfigList @init = 0, @rows = 1, @order_row = 'id';
+
+
+CREATE PROC spScheduleConfigRead(
+	@id INT
+	)
+	AS
+	BEGIN
+		SELECT * FROM schedule_config WHERE id = @id
+	END
+GO
+
+CREATE PROC spScheduleConfigCreate(
+	@branch_id INT,
+	@day INT,
+	@since TIME(6),
+	@until TIME(6),
+	@turn_minutes INT,
+	@turn_maximum INT,
+	@status BIT OUTPUT,
+	@message VARCHAR(100) OUTPUT,
+	@created_by INT = 1
+	)
+	AS
+	BEGIN
+		IF(NOT EXISTS(SELECT * FROM schedule_config WHERE branch_id = @branch_id AND [day] = @day AND @since = since AND @until = until AND @turn_minutes = turn_minutes AND @turn_maximum = turn_maximum))
+		BEGIN
+			INSERT INTO schedule_config(branch_id, [day], since, until, turn_minutes, turn_maximum, created_by, created_at) VALUES(@branch_id, @day, @since, @until, @turn_minutes, @turn_maximum, @created_by, GETDATE())
+			SET @status = 1
+			SET @message = 'La configuración ha sido registrada'
+		END
+		ELSE
+		BEGIN
+			SET @status = 0
+			SET @message = 'La configuración ya se encuentra registrada'
+		END
+	END
+GO
+
+CREATE PROC spScheduleConfigUpdate(
+	@id INT,
+	@branch_id INT,
+	@day INT,
+	@since TIME(6),
+	@until TIME(6),
+	@turn_minutes INT,
+	@turn_maximum INT,
+	@updated_by INT
+	)
+	AS
+	BEGIN
+		UPDATE schedule_config SET branch_id = @branch_id, [day] = @day, since = @since, until = @until, turn_minutes = @turn_minutes, turn_maximum = @turn_maximum, updated_by = @updated_by, updated_at = GETDATE() WHERE id = @id
+	END
+GO
+
+CREATE PROC spScheduleConfigDelete(
+	@id INT
+	)
+	AS
+	BEGIN
+		DELETE FROM schedule_config WHERE id = @id
+	END
+GO
+
+/*SCHEDULE_EXCEPTION*/
+CREATE TABLE schedule_exception(
+  id  INT PRIMARY KEY IDENTITY(1, 1),
+  branch_id INT,
+  [day] INT,
+  since TIME(6),
+  until TIME(6),
+  turn_minutes INT,
+  turn_maximum INT,
+  created_at DATETIME,
+  updated_at DATETIME,
+  created_by INT,
+  updated_by INT,
+  CONSTRAINT FK_schedule_exception_branch FOREIGN KEY (branch_id) REFERENCES branchs(id)
+) 
+GO
+
+CREATE PROCEDURE spScheduleExceptionList(
+    @init INT = 0,
+    @rows INT = 100,
+    @order_row NVARCHAR(100) = 'id'
+	)
+AS
+	BEGIN
+		SET NOCOUNT ON;
+
+		DECLARE @sql NVARCHAR(MAX);
+
+		SET @sql = 'SELECT * FROM (
+						SELECT ROW_NUMBER() OVER (ORDER BY ' + @order_row + ') AS RowNum, *
+							FROM schedule_exception
+						) AS Sub
+					WHERE RowNum BETWEEN ' + CAST(@init + 1 AS NVARCHAR(10)) + ' AND ' + CAST(@init + @rows AS NVARCHAR(10)) + ';';
+
+		EXEC sp_executesql @sql;
+	END
+GO
+
+--EXEC spScheduleExceptionList @init = 0, @rows = 1, @order_row = 'id';
+
+
+CREATE PROC spScheduleExceptionRead(
+	@id INT
+	)
+	AS
+	BEGIN
+		SELECT * FROM schedule_exception WHERE id = @id
+	END
+GO
+
+CREATE PROC spScheduleExceptionCreate(
+	@branch_id INT,
+	@day INT,
+	@since TIME(6),
+	@until TIME(6),
+	@turn_minutes INT,
+	@turn_maximum INT,
+	@status BIT OUTPUT,
+	@message VARCHAR(100) OUTPUT,
+	@created_by INT = 1
+	)
+	AS
+	BEGIN
+		IF(NOT EXISTS(SELECT * FROM schedule_exception WHERE branch_id = @branch_id AND [day] = @day AND @since = since AND @until = until AND @turn_minutes = turn_minutes AND @turn_maximum = turn_maximum))
+		BEGIN
+			INSERT INTO schedule_exception(branch_id, [day], since, until, turn_minutes, turn_maximum, created_by, created_at) VALUES(@branch_id, @day, @since, @until, @turn_minutes, @turn_maximum, @created_by, GETDATE())
+			SET @status = 1
+			SET @message = 'La excepción ha sido registrada'
+		END
+		ELSE
+		BEGIN
+			SET @status = 0
+			SET @message = 'La excepción ya se encuentra registrada'
+		END
+	END
+GO
+
+CREATE PROC spScheduleExceptionUpdate(
+	@id INT,
+	@branch_id INT,
+	@day INT,
+	@since TIME(6),
+	@until TIME(6),
+	@turn_minutes INT,
+	@turn_maximum INT,
+	@updated_by INT
+	)
+	AS
+	BEGIN
+		UPDATE schedule_exception SET branch_id = @branch_id, [day] = @day, since = @since, until = @until, turn_minutes = @turn_minutes, turn_maximum = @turn_maximum, updated_by = @updated_by, updated_at = GETDATE() WHERE id = @id
+	END
+GO
+
+CREATE PROC spScheduleExceptionDelete(
+	@id INT
+	)
+	AS
+	BEGIN
+		DELETE FROM schedule_exception WHERE id = @id
 	END
 GO

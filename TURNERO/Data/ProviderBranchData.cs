@@ -102,6 +102,7 @@ namespace TURNERO.Data
                 {
                     connection.Open();
                     SqlCommand cmd = new SqlCommand("spProviderBranchUpdate", connection);
+                    cmd.Parameters.AddWithValue("@id", oc.id);
                     cmd.Parameters.AddWithValue("@admin_id", oc.admin_id);
                     cmd.Parameters.AddWithValue("@branch_id", oc.branch_id);
                     cmd.Parameters.AddWithValue("@profile_id", oc.profile_id);
